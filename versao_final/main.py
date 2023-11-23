@@ -2,7 +2,7 @@ import pygame as pg
 import json
 from enemy import Enemy
 from world import World
-from turret import Turret
+from turret import TurretLevel1, TurretLevel2, TurretLevel3
 from button import Button
 import constants as c
 
@@ -34,12 +34,13 @@ turret_image = pg.image.load('assets/imagens/torres/dot_blue.png').convert_alpha
 turret_image = pg.transform.scale_by(turret_image, 1/25)
 
 #inimigos
-enemy_image = pg.image.load('assets/imagens/inimigos/Location_dot_black.svg.png').convert_alpha()
-enemy_image = pg.transform.scale_by(enemy_image, 1/15)
+enemy_image = pg.image.load('assets/imagens/inimigos/inim_teste1.png').convert_alpha()
+enemy_image = pg.transform.scale_by(enemy_image, 1/8)
 
 #botoes
 buy_turret_image = pg.image.load('assets/imagens/botoes/buy_turret.png').convert_alpha()
 cancel_image = pg.image.load('assets/imagens/botoes/cancel.png').convert_alpha()
+upgrade_turret_image = pg.image.load('assets/imagens/botoes/upgrade_turret.png').convert_alpha()
 
 #pegando o arquivo json para usar como fase:
 with open('levels/default.tmj') as file:
@@ -49,6 +50,15 @@ with open('levels/default.tmj') as file:
 world = World(world_data, map_image)
 world.process_data()
 
+def upgrade_turret(turret):
+  #teria como concatenar o numero +1 mas deu preguica
+  if turret.nivel == 1:
+      newturret = TurretLevel2(turret.sprite_sheet, turret.tile_x, turret.tile_y)
+      return newturret
+
+  else:
+      newturret = TurretLevel3(turret.sprite_sheet, turret.tile_x, turret.tile_y)
+      return newturret
 
 def create_turret(mouse_pos):
   mouse_tile_x = mouse_pos[0] // c.TILE_SIZE
@@ -64,7 +74,7 @@ def create_turret(mouse_pos):
         space_is_free = False
     #finalmente criar a torre
     if space_is_free:
-      new_turret = Turret(turret_sheet, mouse_tile_x, mouse_tile_y)
+      new_turret = TurretLevel1(turret_sheet, mouse_tile_x, mouse_tile_y)
       turret_group.add(new_turret)
 
 def select_turret(mouse_pos):
@@ -88,6 +98,7 @@ enemy_group.add(enemy)
 #create buttons 
 turret_button = Button(c.SCREEN_WIDTH + 30, 120, buy_turret_image, True)
 cancel_button = Button(c.SCREEN_WIDTH + 50, 180, cancel_image, True)
+upgrade_button = Button(c.SCREEN_WIDTH + 5, 180, upgrade_turret_image, True)
 
 #game loop
 run = True
@@ -117,6 +128,7 @@ while run:
   for turret in turret_group:
     turret.draw(screen)
 
+  #desenhar botoes
   if turret_button.draw(screen):
     placing_turrets = True
   if placing_turrets == True:
@@ -127,6 +139,12 @@ while run:
       screen.blit(cursor_turret, cursor_rect)
     if cancel_button.draw(screen):
       placing_turrets = False
+  
+  #se um turret for selecionado:
+  if selected_turret:
+    if upgrade_button.draw(screen):
+      turret_group.remove(selected_turret)
+      turret_group.add(upgrade_turret(selected_turret))
 
   #event handler
   for event in pg.event.get():

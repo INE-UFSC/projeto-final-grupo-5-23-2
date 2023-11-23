@@ -7,8 +7,6 @@ class Turret(pg.sprite.Sprite):
   
   def __init__(self, sprite_sheet, tile_x, tile_y):
     pg.sprite.Sprite.__init__(self)
-    self.range = 150
-    self.cooldown = 150
     self.last_shot = pg.time.get_ticks()
     self.selected = False  
     self.target = None
@@ -82,3 +80,45 @@ class Turret(pg.sprite.Sprite):
     surface.blit(self.image, self.rect)
     if self.selected:
        surface.blit(self.range_image, self.range_rect)
+  
+
+  #ideias para o delete:
+  #jogar o turret pra uma tile no meio do nada(sei lá)
+
+
+  
+#para upgradear remove-se o turret da tile e instancia o mesmo porém de nível +1 (ideia)
+
+
+class TurretLevel1(Turret):
+  def __init__(self, sprite_sheet, tile_x, tile_y):
+    self.range = 90
+    self.cooldown = 600
+    self.nivel = 1
+    super().__init__(sprite_sheet, tile_x, tile_y)
+  
+  #def aumentar_nivel(self):
+    #teste = TurretLevel2(self.sprite_sheet, self.tile_x, self.tile_y)
+  #isso resultaria um circular import, o que seria uma merda
+  #portanto, a logica de aumentar o nivel tem q estar em main
+  #podemos criar uma classe gerenciador de turrets para deixar mais OOP ainda. (isso apenas deps)
+
+
+
+
+
+class TurretLevel2(Turret):
+  def __init__(self, sprite_sheet, tile_x, tile_y):
+    self.range = 110
+    self.cooldown = 300
+    self.nivel = 2
+    super().__init__(sprite_sheet, tile_x, tile_y)
+    
+
+
+class TurretLevel3(Turret):
+  def __init__(self, sprite_sheet, tile_x, tile_y):
+    self.range = 125
+    self.cooldown = 90
+    self.nivel = 3
+    super().__init__(sprite_sheet, tile_x, tile_y)
