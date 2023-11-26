@@ -104,9 +104,6 @@ class TurretLevel1(Turret):
   #podemos criar uma classe gerenciador de turrets para deixar mais OOP ainda. (isso apenas deps)
 
 
-
-
-
 class TurretLevel2(Turret):
   def __init__(self, sprite_sheet, tile_x, tile_y):
     self.range = 110

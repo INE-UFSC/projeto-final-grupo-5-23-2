@@ -1,6 +1,6 @@
 import pygame as pg
 import json
-from enemy import Enemy
+from enemy import InimigoFraco, InimigoNormal, InimigoElite, InimigoForte
 from world import World
 from turret import TurretLevel1, TurretLevel2, TurretLevel3
 from button import Button
@@ -20,7 +20,7 @@ clock = pg.time.Clock()
 screen = pg.display.set_mode((c.SCREEN_WIDTH + c.PANEL_SIZE, c.SCREEN_HEIGHT))
 pg.display.set_caption("Tower Defense")
 
-
+ultimo_spawn_inimigo = pg.time.get_ticks()
 placing_turrets = False
 selected_turret = None
 
@@ -28,14 +28,18 @@ selected_turret = None
 map_image = pg.image.load('levels/default.png').convert_alpha()
 
 #turret
-turret_sheet = pg.image.load('assets/imagens/torres/turret_1.png').convert_alpha()
+turret_sheet1 = pg.image.load('assets/imagens/torres/turret_1.png').convert_alpha()
+turret_sheet2 = pg.image.load('assets/imagens/torres/turret_2.png').convert_alpha()
+turret_sheet3 = pg.image.load('assets/imagens/torres/turret_3.png').convert_alpha()
 cursor_turret = pg.image.load('assets/imagens/torres/cursor_turret.png').convert_alpha()
-turret_image = pg.image.load('assets/imagens/torres/dot_blue.png').convert_alpha()
-turret_image = pg.transform.scale_by(turret_image, 1/25)
+
 
 #inimigos
-enemy_image = pg.image.load('assets/imagens/inimigos/inim_teste1.png').convert_alpha()
-enemy_image = pg.transform.scale_by(enemy_image, 1/8)
+enemy_image1 = pg.image.load('assets/imagens/inimigos/enemy_1.png').convert_alpha()
+enemy_image2 = pg.image.load('assets/imagens/inimigos/enemy_2.png').convert_alpha()
+enemy_image3 = pg.image.load('assets/imagens/inimigos/enemy_3.png').convert_alpha()
+
+#enemy_image = pg.transform.scale_by(enemy_image, 1/8) nao apagar
 
 #botoes
 buy_turret_image = pg.image.load('assets/imagens/botoes/buy_turret.png').convert_alpha()
@@ -49,15 +53,29 @@ with open('levels/default.tmj') as file:
 #criando "mundo"
 world = World(world_data, map_image)
 world.process_data()
+world.process_inimigos()
 
-def upgrade_turret(turret):
+#ta horrivel isso, eu sei PROCEDURAL
+def decidir_tipo_inimigo():
+  tipo = world.lista_inimigos[world.inimigos_spawnados]
+  world.inimigos_spawnados += 1
+  if tipo == "fraco":
+    return InimigoFraco(world.waypoints, enemy_image1)
+  elif tipo == "normal":
+    return InimigoNormal(world.waypoints, enemy_image2)
+  else:
+    return InimigoForte(world.waypoints, enemy_image3)
+#por enquanto o inimigo elite ta gerando o inimigo forte mesmo
+
+
+def upgrade_turret(turret, turret_sheet2, turret_sheet3):
   #teria como concatenar o numero +1 mas deu preguica
   if turret.nivel == 1:
-      newturret = TurretLevel2(turret.sprite_sheet, turret.tile_x, turret.tile_y)
+      newturret = TurretLevel2(turret_sheet2, turret.tile_x, turret.tile_y)
       return newturret
 
   else:
-      newturret = TurretLevel3(turret.sprite_sheet, turret.tile_x, turret.tile_y)
+      newturret = TurretLevel3(turret_sheet3, turret.tile_x, turret.tile_y)
       return newturret
 
 def create_turret(mouse_pos):
@@ -74,7 +92,7 @@ def create_turret(mouse_pos):
         space_is_free = False
     #finalmente criar a torre
     if space_is_free:
-      new_turret = TurretLevel1(turret_sheet, mouse_tile_x, mouse_tile_y)
+      new_turret = TurretLevel1(turret_sheet1, mouse_tile_x, mouse_tile_y)
       turret_group.add(new_turret)
 
 def select_turret(mouse_pos):
@@ -92,8 +110,8 @@ def clear_selection():
 enemy_group = pg.sprite.Group()
 turret_group = pg.sprite.Group()
 
-enemy = Enemy(world.waypoints, enemy_image)
-enemy_group.add(enemy)
+
+
 
 #create buttons 
 turret_button = Button(c.SCREEN_WIDTH + 30, 120, buy_turret_image, True)
@@ -128,6 +146,13 @@ while run:
   for turret in turret_group:
     turret.draw(screen)
 
+
+  #spawnar inimigos
+  if pg.time.get_ticks() - ultimo_spawn_inimigo >= c.SPAWN_COOLDOWN and world.inimigos_spawnados < len(world.lista_inimigos):
+    enemy_group.add(decidir_tipo_inimigo())
+    ultimo_spawn_inimigo = pg.time.get_ticks()
+
+
   #desenhar botoes
   if turret_button.draw(screen):
     placing_turrets = True
@@ -141,10 +166,11 @@ while run:
       placing_turrets = False
   
   #se um turret for selecionado:
-  if selected_turret:
+  if selected_turret and selected_turret.nivel < 3:
     if upgrade_button.draw(screen):
       turret_group.remove(selected_turret)
-      turret_group.add(upgrade_turret(selected_turret))
+      turret_group.add(upgrade_turret(selected_turret, turret_sheet2, turret_sheet3))
+      selected_turret = None
 
   #event handler
   for event in pg.event.get():

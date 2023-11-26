@@ -8,7 +8,6 @@ class Enemy(pg.sprite.Sprite):
     self.waypoints = waypoints
     self.pos = Vector2(self.waypoints[0]) + Vector2(32, 0)
     self.target_waypoint = 1
-    self.speed = 0.5
     self.angle = 0
     self.original_image = image
     self.image = pg.transform.rotate(self.original_image, self.angle)
@@ -43,11 +42,32 @@ class Enemy(pg.sprite.Sprite):
     dist = self.target - self.pos
     #usa distance para calcular angle
     self.angle = math.degrees(math.atan2(-dist[1], dist[0]))
-    temp = self.angle
-    if 179<=self.angle<=180:
-      self.angle = 0
     #rotatciona imagem e re-atualiza o retangulo
     self.image = pg.transform.rotate(self.original_image, self.angle)
     self.rect = self.image.get_rect()
     self.rect.center = self.pos
-    self.angle = temp
+
+  
+class InimigoFraco(Enemy):
+    def __init__(self, waypoints, image):
+        self.speed = 0.5
+        self.health = 10
+        super().__init__(waypoints, image)
+
+class InimigoNormal(Enemy):
+    def __init__(self, waypoints, image):
+        self.speed = 1
+        self.health = 20
+        super().__init__(waypoints, image)
+  
+class InimigoForte(Enemy):
+    def __init__(self, waypoints, image):
+        self.speed = 2
+        self.health = 50
+        super().__init__(waypoints, image)
+
+class InimigoElite(Enemy):
+    def __init__(self, waypoints, image):
+        self.speed = 1
+        self.health = 500
+        super().__init__(waypoints, image)
