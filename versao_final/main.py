@@ -229,13 +229,15 @@ def play():
 #Para pausar
 def pause():
   paused = True
+  screen.blit(pause_image, (170, 100))
+  back_button.draw(screen)
+  close_button.draw(screen)
 
   while paused:
     for event in pg.event.get():
       if event.type == pg.QUIT:
         pg.quit()
         quit()
-    
       if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
         if back_button.draw(screen):
           paused = False
@@ -243,9 +245,6 @@ def pause():
           pg.quit()
           quit()
 
-    screen.fill('blue')
-    back_button.draw(screen)
-    close_button.draw(screen)
     pg.display.update()
     clock.tick(30)
 
