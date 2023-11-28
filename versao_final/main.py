@@ -63,6 +63,7 @@ wallpaper_image = pg.image.load('assets/imagens/wallpaper.jpeg').convert_alpha()
 new_game_button_image = pg.image.load('assets/imagens/botoes/newgame.png').convert_alpha()
 leave_button_image = pg.image.load('assets/imagens/botoes/leave.png').convert_alpha()
 records_button_image = pg.image.load('assets/imagens/botoes/records.png').convert_alpha()
+title_image = pg.image.load('assets/imagens/componentes/title.png').convert_alpha()
 
   #pause
 pause_image = pg.image.load('assets/imagens/componentes/pause.png').convert_alpha()
@@ -133,14 +134,43 @@ def clear_selection():
 enemy_group = pg.sprite.Group()
 turret_group = pg.sprite.Group()
 
-
+############################################################################Isso aqui deve dar pra ficar só no play()
 #create buttons 
 turret_button = Button(c.SCREEN_WIDTH + 30, 120, buy_turret_image, True)
 cancel_button = Button(c.SCREEN_WIDTH + 50, 180, cancel_image, True)
 upgrade_button = Button(c.SCREEN_WIDTH + 5, 180, upgrade_turret_image, True)
-new_game_button = Button(c.SCREEN_WIDTH + 50, 300, new_game_button_image, True)
-close_button = Button(300, 370, close_button_image, True)
-back_button = Button(500, 370, back_button_image, True)
+############################################################################
+
+#tela inicial
+def init():
+  pg.display.set_caption('Tower Defense')
+  new_game_button = Button(230, 280, new_game_button_image, True)
+  leave_button = Button(230, 380, leave_button_image, True)
+  records_button = Button(230, 480, records_button_image, True)
+
+  while True:
+    clock.tick(c.FPS)
+    for event in pg.event.get():
+      if event.type == pg.QUIT:
+        pg.quit()
+        quit()
+      if event.type == pg.MOUSEBUTTONDOWN:
+        if new_game_button.draw(screen):
+          play()
+        elif leave_button.draw(screen):
+          pg.quit()
+          quit()
+        elif records_button.draw(screen):
+          pass
+      
+      screen.blit(wallpaper_image, (-40, 0))
+      screen.blit(title_image, (35, 130))
+      new_game_button.draw(screen)
+      leave_button.draw(screen)
+      records_button.draw(screen)
+
+    pg.display.update()
+
 
 #game loop
 def play():
@@ -220,8 +250,6 @@ def play():
         if event.key == pg.K_ESCAPE:
           pause()
 
-
-
     #update display
     pg.display.flip()
 
@@ -230,10 +258,13 @@ def play():
 def pause():
   paused = True
   screen.blit(pause_image, (170, 100))
+  close_button = Button(300, 370, close_button_image, True)
+  back_button = Button(500, 370, back_button_image, True)
   back_button.draw(screen)
   close_button.draw(screen)
 
   while paused:
+    clock.tick(c.FPS)
     for event in pg.event.get():
       if event.type == pg.QUIT:
         pg.quit()
@@ -244,11 +275,11 @@ def pause():
         elif close_button.draw(screen):
           pg.quit()
           quit()
-
     pg.display.update()
-    clock.tick(30)
+
+#tela game over (a fazer)
 
 
-play()
+init()
 
 pg.quit()
