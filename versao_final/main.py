@@ -139,8 +139,8 @@ turret_button = Button(c.SCREEN_WIDTH + 30, 120, buy_turret_image, True)
 cancel_button = Button(c.SCREEN_WIDTH + 50, 180, cancel_image, True)
 upgrade_button = Button(c.SCREEN_WIDTH + 5, 180, upgrade_turret_image, True)
 new_game_button = Button(c.SCREEN_WIDTH + 50, 300, new_game_button_image, True)
-close_button = Button(c.SCREEN_WIDTH +80, 370, close_button_image, True)
-back_button = Button(c.SCREEN_WIDTH, 370, back_button_image, True)
+close_button = Button(300, 370, close_button_image, True)
+back_button = Button(500, 370, back_button_image, True)
 
 #game loop
 def play():
@@ -236,23 +236,18 @@ def pause():
         pg.quit()
         quit()
     
-      if event.type == pg.KEYDOWN:
-        if event.key == pg.K_c:
+      if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+        if back_button.draw(screen):
           paused = False
-        elif event.key == pg.K_q:
+        elif close_button.draw(screen):
           pg.quit()
           quit()
 
-      if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
-        mouse_pos = pg.mouse.get_pos()
-        if mouse_pos[0] == back_button.x and mouse_pos[1] == back_button.y:
-          paused = False
     screen.fill('blue')
     back_button.draw(screen)
     close_button.draw(screen)
-
     pg.display.update()
-    clock.tick(5)
+    clock.tick(30)
 
 
 play()
