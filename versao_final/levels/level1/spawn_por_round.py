@@ -3,16 +3,16 @@
 SPAWN_POR_ROUND = [
   {
     #1
-    "fraco": 10,
-    "normal": 3,
-    "forte": 3,
+    "fraco": 1,
+    "normal": 0,
+    "forte": 0,
     "elite": 0
   },
   {
     #2
-    "fraco": 30,
+    "fraco": 0,
     "normal": 0,
-    "forte": 0,
+    "forte": 10,
     "elite": 0
   },
   {

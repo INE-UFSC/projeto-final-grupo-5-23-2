@@ -62,6 +62,12 @@ class Turret(pg.sprite.Sprite):
       if dist < self.range:
         self.target = enemy
         self.angle =  math.degrees(math.atan2(-y, x))
+        #causar dano
+        self.causar_dano(self.target)
+    
+  def causar_dano(self, target):
+    target.health -= self.damage
+        
       
 
   def play_animation(self):
@@ -95,13 +101,8 @@ class TurretLevel1(Turret):
     self.range = 90
     self.cooldown = 600
     self.nivel = 1
+    self.damage = 6
     super().__init__(sprite_sheet, tile_x, tile_y)
-  
-  #def aumentar_nivel(self):
-    #teste = TurretLevel2(self.sprite_sheet, self.tile_x, self.tile_y)
-  #isso resultaria um circular import, o que seria uma merda
-  #portanto, a logica de aumentar o nivel tem q estar em main
-  #podemos criar uma classe gerenciador de turrets para deixar mais OOP ainda. (isso apenas deps)
 
 
 class TurretLevel2(Turret):
@@ -109,6 +110,7 @@ class TurretLevel2(Turret):
     self.range = 110
     self.cooldown = 300
     self.nivel = 2
+    self.damage = 20
     super().__init__(sprite_sheet, tile_x, tile_y)
     
 
@@ -118,4 +120,5 @@ class TurretLevel3(Turret):
     self.range = 125
     self.cooldown = 90
     self.nivel = 3
+    self.damage = 40
     super().__init__(sprite_sheet, tile_x, tile_y)

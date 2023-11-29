@@ -29,11 +29,12 @@ def draw_text(text, font, text_color, x, y):
 
 
 ########################################################Isso aqui deve dar pra ficar só dentro de play()
-ultimo_spawn_inimigo = pg.time.get_ticks()
-placing_turrets = False
-selected_turret = None
+#level_comecou = False
+#ultimo_spawn_inimigo = pg.time.get_ticks()
+#placing_turrets = False
+#selected_turret = None
 ########################################################
-
+#têm q colocar dentro de play, pq sao variaveis externas. Serao atributos futuramente
 
 
 #mapa
@@ -57,6 +58,7 @@ enemy_image3 = pg.image.load('assets/imagens/inimigos/enemy_3.png').convert_alph
 buy_turret_image = pg.image.load('assets/imagens/botoes/buy_turret.png').convert_alpha()
 cancel_image = pg.image.load('assets/imagens/botoes/cancel.png').convert_alpha()
 upgrade_turret_image = pg.image.load('assets/imagens/botoes/upgrade_turret.png').convert_alpha()
+begin_round_image = pg.image.load('assets/imagens/botoes/begin.png').convert_alpha()
 
   #tela de inicio
 wallpaper_image = pg.image.load('assets/imagens/wallpaper.jpeg').convert_alpha()
@@ -73,13 +75,20 @@ back_button_image = pg.image.load('assets/imagens/botoes/back.png').convert_alph
 #pegando o arquivo json para usar como fase:
 with open('levels/default.tmj') as file:
   world_data = json.load(file)
+#carregando fontes:
+fonte1 = pg.font.SysFont("Consolas", 25, bold=True)
+fontegrande1 = pg.font.SysFont("Consolas", 40)
+
 
 #criando "mundo"
 world = World(world_data, map_image)
 world.process_data()
 world.process_inimigos()
 
-#ta horrivel isso, eu sei PROCEDURAL
+def printar_texto_na_tela(text, fonte, text_col, x, y):
+  img = fonte.render(text, True, text_col)
+  screen.blit(img, (x, y))
+
 def decidir_tipo_inimigo():
   tipo = world.lista_inimigos[world.inimigos_spawnados]
   world.inimigos_spawnados += 1
@@ -114,10 +123,13 @@ def create_turret(mouse_pos):
     for turret in turret_group:
       if (mouse_tile_x, mouse_tile_y) == (turret.tile_x, turret.tile_y):
         space_is_free = False
-    #finalmente criar a torre
+        break
+    #ver se tem dinheiro rs
     if space_is_free:
-      new_turret = TurretLevel1(turret_sheet1, mouse_tile_x, mouse_tile_y)
-      turret_group.add(new_turret)
+      if world.money >= c.BUY_COST:
+        new_turret = TurretLevel1(turret_sheet1, mouse_tile_x, mouse_tile_y)
+        turret_group.add(new_turret)
+        world.money -= c.BUY_COST
 
 def select_turret(mouse_pos):
   mouse_tile_x = mouse_pos[0] // c.TILE_SIZE
@@ -139,6 +151,7 @@ turret_group = pg.sprite.Group()
 turret_button = Button(c.SCREEN_WIDTH + 30, 120, buy_turret_image, True)
 cancel_button = Button(c.SCREEN_WIDTH + 50, 180, cancel_image, True)
 upgrade_button = Button(c.SCREEN_WIDTH + 5, 180, upgrade_turret_image, True)
+begin_round_button = Button(c.SCREEN_WIDTH + 60, 300, begin_round_image, True)
 ############################################################################
 
 #tela inicial
@@ -174,9 +187,13 @@ def init():
 
 #game loop
 def play():
+  #algumas variaveis importantes
   ultimo_spawn_inimigo = pg.time.get_ticks()
   placing_turrets = False
   selected_turret = None
+  level_comecou = False
+  game_over = False
+
   run = True
   while run:
 
@@ -184,14 +201,25 @@ def play():
 
     # Updating
 
+    # checar se nao fomos de base ou se favela venceu
+    if not game_over:
+      if world.health <= 0:
+        game_over = True
+        tela_game_over(False)
+      
+      if world.level > c.LEVELS_TOTAIS:
+        game_over = True
+        tela_game_over(True)
+
+
     #atualizar grupos
-    enemy_group.update()
+    enemy_group.update(world)
     turret_group.update(enemy_group)
 
     if selected_turret:
       selected_turret.selected = True
 
-    # Drawing
+    # Drawing ------------------------
 
     screen.fill("grey100")
 
@@ -204,31 +232,46 @@ def play():
     for turret in turret_group:
       turret.draw(screen)
 
+    printar_texto_na_tela((str(world.health)), fonte1, "grey100", 0, 0) 
+    printar_texto_na_tela((str(int(world.money))), fonte1, "grey100", 0, 30)
+    printar_texto_na_tela((f"level {str(world.level)}"), fonte1, "grey100", 0, 60)
 
-    #spawnar inimigos
-    if pg.time.get_ticks() - ultimo_spawn_inimigo >= c.SPAWN_COOLDOWN and world.inimigos_spawnados < len(world.lista_inimigos):
-      enemy_group.add(decidir_tipo_inimigo())
-      ultimo_spawn_inimigo = pg.time.get_ticks()
+    if not game_over:
+      #checar se começou:
+      if not level_comecou:
+        if begin_round_button.draw(screen):
+          level_comecou = True
+      else:
+        #spawnar inimigos
+        if pg.time.get_ticks() - ultimo_spawn_inimigo >= c.SPAWN_COOLDOWN and world.inimigos_spawnados < len(world.lista_inimigos):
+          enemy_group.add(decidir_tipo_inimigo())
+          ultimo_spawn_inimigo = pg.time.get_ticks()
+      
+      #checar se a wave n acabou:
+      if world.checar_round_acabou():
+        level_comecou = False
 
-
-    #desenhar botoes
-    if turret_button.draw(screen):
-      placing_turrets = True
-    if placing_turrets == True:
-      cursor_rect = cursor_turret.get_rect()
-      cursor_pos = pg.mouse.get_pos()
-      cursor_rect.center = cursor_pos
-      if cursor_pos[0] <= c.SCREEN_WIDTH:
-        screen.blit(cursor_turret, cursor_rect)
-      if cancel_button.draw(screen):
-        placing_turrets = False
-    
-    #se um turret for selecionado:
-    if selected_turret and selected_turret.nivel < 3:
-      if upgrade_button.draw(screen):
-        turret_group.remove(selected_turret)
-        turret_group.add(upgrade_turret(selected_turret, turret_sheet2, turret_sheet3))
-        selected_turret = None
+      #desenhar botoes
+      if turret_button.draw(screen):
+        placing_turrets = True
+      if placing_turrets == True:
+        cursor_rect = cursor_turret.get_rect()
+        cursor_pos = pg.mouse.get_pos()
+        cursor_rect.center = cursor_pos
+        if cursor_pos[0] <= c.SCREEN_WIDTH:
+          screen.blit(cursor_turret, cursor_rect)
+        if cancel_button.draw(screen):
+          placing_turrets = False
+      
+      #se um turret for selecionado:
+      if selected_turret and selected_turret.nivel < 3:
+        if upgrade_button.draw(screen):
+    #possivelmente no futuro player.money
+          if world.money >= c.UPGRADE_COST:
+            world.money -= c.UPGRADE_COST
+            selected_turret.kill()
+            turret_group.add(upgrade_turret(selected_turret, turret_sheet2, turret_sheet3))
+            selected_turret = None
 
     #event handler
     for event in pg.event.get():
@@ -278,7 +321,19 @@ def pause():
     pg.display.update()
 
 #tela game over (a fazer)
+def tela_game_over(resultado):
+  if resultado:
+    # ganhou
+    pass
+  else:
+    #perdeu
+    pass
+# o restart aqui terá que 1) rodar a funcao jogar de novo; e 2) resetar todas as classes e objetos q nós tínhamos
+# basicamente rodará a nossa classe principal de novo (o que ainda n foi feito). Ent, n precisa de definir a funcao restart.
 
+def restart():
+  world = World(world_data, map_image)
+  #etc
 
 init()
 

@@ -13,18 +13,22 @@ class Enemy(pg.sprite.Sprite):
     self.image = pg.transform.rotate(self.original_image, self.angle)
     self.rect = self.image.get_rect()
     self.rect.center = self.pos
-
-  def update(self):
-    self.move()
+  #para mim(murta): world so esta para adicionar dinheiro, pode mudar para player e como atributo de inicializacao depois
+  def update(self, world):
+    self.move(world)
     self.rotate()
+    self.checar_vivo(world)
+  #checa todos os "ciclos"de clock
 
-  def move(self):
+  def move(self, world):
     #define o target waypoint
     if self.target_waypoint < len(self.waypoints):
       self.target = Vector2(self.waypoints[self.target_waypoint])
       self.movement = self.target - self.pos
     else:
       #ja chegou, n ha mais waypoint
+      world.health -= self.forca
+      world.inimigos_perdidos += 1
       self.kill()
 
     #calcula distancia
@@ -47,23 +51,34 @@ class Enemy(pg.sprite.Sprite):
     self.rect = self.image.get_rect()
     self.rect.center = self.pos
 
+  def checar_vivo(self, world):
+     if self.health <= 0:
+        world.money += self.reward
+        world.inimigos_killados += 1
+        self.kill()
   
 class InimigoFraco(Enemy):
     def __init__(self, waypoints, image):
         self.speed = 0.5
         self.health = 10
+        self.reward = 10
+        self.forca = 1
         super().__init__(waypoints, image)
 
 class InimigoNormal(Enemy):
     def __init__(self, waypoints, image):
-        self.speed = 1
+        self.speed = 1.8
         self.health = 20
+        self.reward = 20
+        self.forca = 2
         super().__init__(waypoints, image)
   
 class InimigoForte(Enemy):
     def __init__(self, waypoints, image):
-        self.speed = 2
+        self.speed = 2.5
         self.health = 50
+        self.reward = 50
+        self.forca = 10
         super().__init__(waypoints, image)
 
 class InimigoElite(Enemy):
