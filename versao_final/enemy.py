@@ -28,14 +28,14 @@ class Enemy(pg.sprite.Sprite):
     else:
       #ja chegou, n ha mais waypoint
       world.health -= self.forca
-      world.inimigos_perdidos += 1
+      world.inimigos_missados += 1
       self.kill()
 
     #calcula distancia
     dist = self.movement.length()
     #checa se distancia n seria menor que o speed  para o inimigo nao andar " demais"
-    if dist >= self.speed:
-      self.pos += self.movement.normalize() * self.speed
+    if dist >= (self.speed*world.velocidade_jogo):
+      self.pos += self.movement.normalize() * (self.speed*world.velocidade_jogo)
     else:
       if dist != 0:
         self.pos += self.movement.normalize() * dist

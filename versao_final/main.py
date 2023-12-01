@@ -54,11 +54,12 @@ enemy_image3 = pg.image.load('assets/imagens/inimigos/enemy_3.png').convert_alph
 
 #enemy_image = pg.transform.scale_by(enemy_image, 1/8) nao apagar
 
-#botoes
+#botoes imagens
 buy_turret_image = pg.image.load('assets/imagens/botoes/buy_turret.png').convert_alpha()
 cancel_image = pg.image.load('assets/imagens/botoes/cancel.png').convert_alpha()
 upgrade_turret_image = pg.image.load('assets/imagens/botoes/upgrade_turret.png').convert_alpha()
 begin_round_image = pg.image.load('assets/imagens/botoes/begin.png').convert_alpha()
+acelerar_image = pg.image.load('assets/imagens/botoes/fast_forward.png').convert_alpha()
 
   #tela de inicio
 wallpaper_image = pg.image.load('assets/imagens/wallpaper.jpeg').convert_alpha()
@@ -152,6 +153,9 @@ turret_button = Button(c.SCREEN_WIDTH + 30, 120, buy_turret_image, True)
 cancel_button = Button(c.SCREEN_WIDTH + 50, 180, cancel_image, True)
 upgrade_button = Button(c.SCREEN_WIDTH + 5, 180, upgrade_turret_image, True)
 begin_round_button = Button(c.SCREEN_WIDTH + 60, 300, begin_round_image, True)
+acelerar_button = Button(c.SCREEN_WIDTH + 50, 300, acelerar_image, False)
+#enquanto segurar o b otao o jogo acelera
+
 ############################################################################
 
 #tela inicial
@@ -214,7 +218,7 @@ def play():
 
     #atualizar grupos
     enemy_group.update(world)
-    turret_group.update(enemy_group)
+    turret_group.update(enemy_group, world)
 
     if selected_turret:
       selected_turret.selected = True
@@ -242,8 +246,11 @@ def play():
         if begin_round_button.draw(screen):
           level_comecou = True
       else:
+        world.velocidade_jogo = 1
+        if acelerar_button.draw(screen):
+          world.velocidade_jogo = 3
         #spawnar inimigos
-        if pg.time.get_ticks() - ultimo_spawn_inimigo >= c.SPAWN_COOLDOWN and world.inimigos_spawnados < len(world.lista_inimigos):
+        if pg.time.get_ticks() - ultimo_spawn_inimigo >= c.SPAWN_COOLDOWN/world.velocidade_jogo and world.inimigos_spawnados < len(world.lista_inimigos):
           enemy_group.add(decidir_tipo_inimigo())
           ultimo_spawn_inimigo = pg.time.get_ticks()
       

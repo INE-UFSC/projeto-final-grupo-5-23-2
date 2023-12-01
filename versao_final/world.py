@@ -16,8 +16,9 @@ class World():
     self.lista_inimigos = [] #isso sera um atributo da classe gerenciador de inimigos
     self.inimigos_spawnados = 0
     self.inimigos_killados = 0
-    self.inimigos_perdidos = 0
-
+    self.inimigos_missados = 0
+    self.velocidade_jogo = 1
+    
   def process_data(self):
     #pega os dados sobre o mapa (json) e, por meio de multiplas iteracoes, envia o dicionario com os waypoints para process_waypoints()
     for layer in self.level_data["layers"]:
@@ -48,7 +49,7 @@ class World():
     surface.blit(self.image, (0, 0))
 
   def checar_round_acabou(self):
-    if (self.inimigos_killados + self.inimigos_perdidos) == len(self.lista_inimigos):
+    if (self.inimigos_killados + self.inimigos_missados) == len(self.lista_inimigos):
       self.reset_round()
       return True
   
@@ -56,7 +57,7 @@ class World():
     self.money += c.RECOMPENSA_LEVEL_PADRAO * (self.level/2)
 
     self.inimigos_killados = 0
-    self.inimigos_perdidos = 0
+    self.inimigos_missados = 0
     self.inimigos_spawnados = 0
     self.lista_inimigos = []
 
