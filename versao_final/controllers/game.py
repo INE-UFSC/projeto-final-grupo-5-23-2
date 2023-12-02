@@ -2,11 +2,8 @@ import pygame as pg
 import constants as c
 import json
 
-from button import Button
 from world import World
-from pygame import mixer
-from enemy import InimigoFraco, InimigoNormal, InimigoElite, InimigoForte
-from turret import TurretLevel1, TurretLevel2, TurretLevel3
+from enemy import InimigoFraco, InimigoNormal, InimigoForte
 
 from states.game_over import GameOverState
 from states.game import GameState
@@ -15,7 +12,7 @@ from states.init import InitState
 from states.win import WinState
 
 
-class Game:
+class GameController:
     def __init__(self):
         pg.init()
         self.clock = pg.time.Clock()
