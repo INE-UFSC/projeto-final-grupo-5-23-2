@@ -6,11 +6,16 @@ import constants as c
 
 class Turret(pg.sprite.Sprite):
 
-    def __init__(self, sprite_sheet, tile_x, tile_y):
+    def __init__(self, sprite_sheet, tile_x, tile_y, range, cooldawn, nivel, damage):
         pg.sprite.Sprite.__init__(self)
         self.last_shot = pg.time.get_ticks()
         self.selected = False
         self.target = None
+
+        self.range = range
+        self.cooldown = cooldawn
+        self.nivel = nivel
+        self.damage = damage
 
         self.tile_x = tile_x
         self.tile_y = tile_y
@@ -100,26 +105,14 @@ class Turret(pg.sprite.Sprite):
 
 class TurretLevel1(Turret):
     def __init__(self, sprite_sheet, tile_x, tile_y):
-        self.range = 90
-        self.cooldown = 600
-        self.nivel = 1
-        self.damage = 6
-        super().__init__(sprite_sheet, tile_x, tile_y)
+        super().__init__(sprite_sheet, tile_x, tile_y, 90, 600, 1, 6)
 
 
 class TurretLevel2(Turret):
     def __init__(self, sprite_sheet, tile_x, tile_y):
-        self.range = 110
-        self.cooldown = 300
-        self.nivel = 2
-        self.damage = 20
-        super().__init__(sprite_sheet, tile_x, tile_y)
+        super().__init__(sprite_sheet, tile_x, tile_y, 110, 300, 2, 20)
 
 
 class TurretLevel3(Turret):
     def __init__(self, sprite_sheet, tile_x, tile_y):
-        self.range = 125
-        self.cooldown = 90
-        self.nivel = 3
-        self.damage = 40
-        super().__init__(sprite_sheet, tile_x, tile_y)
+        super().__init__(sprite_sheet, tile_x, tile_y, 125, 90, 3, 40)
