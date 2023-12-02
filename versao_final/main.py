@@ -21,6 +21,10 @@ clock = pg.time.Clock()
 screen = pg.display.set_mode((c.SCREEN_WIDTH + c.PANEL_SIZE, c.SCREEN_HEIGHT))
 pg.display.set_caption("Tower Defense")
 
+#icone
+icon_image = pg.image.load('assets/imagens/componentes/icon1.jpeg').convert_alpha()
+pg.display.set_icon(icon_image)
+
 #Para criar textos
 text_font = pg.font.SysFont("Arial", 30)
 
@@ -86,7 +90,7 @@ congratulations_image = pg.image.load('assets/imagens/congratulations.png').conv
 credits_image = pg.image.load('assets/imagens/credits.png').convert_alpha()
 
   #musicas e sons
-  
+click_sound = mixer.Sound('assets/effects/click.wav')
 
 #pegando o arquivo json para usar como fase:
 with open('levels/default.tmj') as file:
@@ -169,7 +173,8 @@ def init():
   leave_button = Button(230, 380, leave_button_image, True)
   records_button = Button(230, 480, records_button_image, True)
   iniciar = True
-  
+  music = mixer.Sound('assets/musics/music1.mp3')
+  music.play(-1)
 
   while iniciar:
     clock.tick(c.FPS)
@@ -181,11 +186,15 @@ def init():
         
       if event.type == pg.MOUSEBUTTONDOWN:
         if new_game_button.draw(screen):
+          click_sound.play()
+          music.stop()
           play()
         elif leave_button.draw(screen):
+          click_sound.play()
           pg.quit()
           quit()
         elif records_button.draw(screen):
+          click_sound.play()
           pass
       
       screen.blit(wallpaper_image, (-40, 0))
@@ -259,6 +268,7 @@ def play():
       #checar se começou:
       if not level_comecou:
         if begin_round_button.draw(screen):
+          click_sound.play()
           level_comecou = True
       else:
         world.velocidade_jogo = 1
@@ -275,6 +285,7 @@ def play():
 
       #desenhar botoes
       if turret_button.draw(screen):
+        click_sound.play()
         placing_turrets = True
       if placing_turrets == True:
         cursor_rect = cursor_turret.get_rect()
@@ -283,6 +294,7 @@ def play():
         if cursor_pos[0] <= c.SCREEN_WIDTH:
           screen.blit(cursor_turret, cursor_rect)
         if cancel_button.draw(screen):
+          click_sound.play()
           placing_turrets = False
       
       #se um turret for selecionado:
@@ -337,8 +349,10 @@ def pause():
         quit()
       if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
         if back_button.draw(screen):
+          click_sound.play()
           paused = False
         elif close_button.draw(screen):
+          click_sound.play()
           pg.quit()
           quit()
     pg.display.update()
@@ -363,9 +377,11 @@ def tela_game_over():
         quit()
       if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
         if new_game_button.draw(screen):
+          click_sound.play()
           game_over = False
           restart()
         elif tela_inicial_button.draw(screen):
+          click_sound.play()
           game_over = False
           init()
 
@@ -388,6 +404,7 @@ def tela_win():
         quit()
       if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
         if continue_button.draw(screen) == 1:
+          click_sound.play()
           init()
 
     pg.display.update()

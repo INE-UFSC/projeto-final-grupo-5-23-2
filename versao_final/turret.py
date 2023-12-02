@@ -1,4 +1,5 @@
 import pygame as pg
+from pygame import mixer
 import math
 import constants as c
 
@@ -64,6 +65,8 @@ class Turret(pg.sprite.Sprite):
         self.target = enemy
         self.angle =  math.degrees(math.atan2(-y, x))
         #causar dano
+        shot_sound = mixer.Sound('assets/effects/shot.wav')
+        shot_sound.play()
         self.causar_dano(self.target)
     
   def causar_dano(self, target):

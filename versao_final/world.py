@@ -2,6 +2,7 @@ import pygame as pg
 from levels.level1 import spawn_por_round as spr
 import random
 import constants as c
+from pygame import mixer
 
 class World():
   def __init__(self, data, map_image):
@@ -51,6 +52,8 @@ class World():
   def checar_round_acabou(self):
     if (self.inimigos_killados + self.inimigos_missados) == len(self.lista_inimigos):
       self.reset_round()
+      level_complete = mixer.Sound('assets/effects/levelcomplete.wav')
+      level_complete.play()
       return True
   
   def reset_round(self):
