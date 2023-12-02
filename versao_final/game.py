@@ -19,9 +19,11 @@ class Game:
     def __init__(self):
         pg.init()
         self.clock = pg.time.Clock()
-        self.screen = pg.display.set_mode((c.SCREEN_WIDTH + c.PANEL_SIZE, c.SCREEN_HEIGHT))
+        self.screen = pg.display.set_mode(
+            (c.SCREEN_WIDTH + c.PANEL_SIZE, c.SCREEN_HEIGHT))
         pg.display.set_caption("Tower Defense")
-        self.icon_image = pg.image.load('assets/imagens/componentes/icon1.jpeg').convert_alpha()
+        self.icon_image = pg.image.load(
+            'assets/imagens/componentes/icon1.jpeg').convert_alpha()
         map_image = pg.image.load('levels/default.png').convert_alpha()
         pg.display.set_icon(self.icon_image)
         self.font = pg.font.SysFont("Arial", 30)
@@ -36,9 +38,12 @@ class Game:
         self.turret_group = pg.sprite.Group()
 
     def decidir_tipo_inimigo(self):
-        enemy_image1 = pg.image.load('assets/imagens/inimigos/enemy_1.png').convert_alpha()
-        enemy_image2 = pg.image.load('assets/imagens/inimigos/enemy_2.png').convert_alpha()
-        enemy_image3 = pg.image.load('assets/imagens/inimigos/enemy_3.png').convert_alpha()
+        enemy_image1 = pg.image.load(
+            'assets/imagens/inimigos/enemy_1.png').convert_alpha()
+        enemy_image2 = pg.image.load(
+            'assets/imagens/inimigos/enemy_2.png').convert_alpha()
+        enemy_image3 = pg.image.load(
+            'assets/imagens/inimigos/enemy_3.png').convert_alpha()
 
         tipo = self.world.lista_inimigos[self.world.inimigos_spawnados]
         self.world.inimigos_spawnados += 1
@@ -48,7 +53,7 @@ class Game:
             return InimigoNormal(self.world.waypoints, enemy_image2)
         else:
             return InimigoForte(self.world.waypoints, enemy_image3)
-        #por enquanto o inimigo elite ta gerando o inimigo forte mesmo
+        # por enquanto o inimigo elite ta gerando o inimigo forte mesmo
 
     def clear_selection(self):
         for turret in self.turret_group:
@@ -59,7 +64,7 @@ class Game:
         mouse_tile_y = mouse_pos[1] // c.TILE_SIZE
         for turret in self.turret_group:
             if (mouse_tile_x, mouse_tile_y) == (turret.tile_x, turret.tile_y):
-                return turret  
+                return turret
 
     def change_state(self, new_state):
         self.state = new_state(self.screen, self.clock, self)
@@ -72,7 +77,7 @@ class Game:
 
     def set_game_state(self):
         self.change_state(GameState)
-    
+
     def set_pause_state(self):
         self.change_state(PauseState)
 

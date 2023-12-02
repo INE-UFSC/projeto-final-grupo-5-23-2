@@ -10,10 +10,9 @@ class Button():
         self.clicked = False
         self.single_click = single_click
 
-
     def draw(self, surface):
         action = False
-        
+
         pos = pg.mouse.get_pos()
 
         if self.rect.collidepoint(pos):

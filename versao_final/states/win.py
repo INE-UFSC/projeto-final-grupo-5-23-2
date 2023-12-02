@@ -15,13 +15,18 @@ class WinState(State):
     def __init__(self, screen, clock, game):
         super().__init__(screen, clock, game)
         self.win = True
-        self.win_image = pg.image.load('assets/imagens/win.jpeg').convert_alpha()
-        self.congratulations_image = pg.image.load('assets/imagens/congratulations.png').convert_alpha()
-        self.credits_image = pg.image.load('assets/imagens/credits.png').convert_alpha()
-        self.continue_button_image = pg.image.load('assets/imagens/botoes/continuar.png').convert_alpha()
+        self.win_image = pg.image.load(
+            'assets/imagens/win.jpeg').convert_alpha()
+        self.congratulations_image = pg.image.load(
+            'assets/imagens/congratulations.png').convert_alpha()
+        self.credits_image = pg.image.load(
+            'assets/imagens/credits.png').convert_alpha()
+        self.continue_button_image = pg.image.load(
+            'assets/imagens/botoes/continuar.png').convert_alpha()
         self.click_sound = pg.mixer.Sound('assets/effects/click.wav')
 
-        self.continue_button = Button(370, 350, self.continue_button_image, True)
+        self.continue_button = Button(
+            370, 350, self.continue_button_image, True)
 
     def handle_escape(self):
         pass
@@ -43,4 +48,4 @@ class WinState(State):
         self.screen.blit(self.win_image, (0, 0))
         self.screen.blit(self.congratulations_image, (150, 220))
         self.screen.blit(self.credits_image, (50, 600))
-        self.continue_button.draw(self.screen)   
+        self.continue_button.draw(self.screen)

@@ -15,14 +15,20 @@ class GameOverState(State):
     def __init__(self, screen, clock, game):
         super().__init__(screen, clock, game)
         self.game_over = True
-        self.game_over_image = pg.image.load('assets/imagens/fundo_gameover.jpeg').convert_alpha()
-        self.game_over_text_image = pg.image.load('assets/imagens/componentes/gameover_text.png').convert_alpha()
-        self.new_game_button_image = pg.image.load('assets/imagens/botoes/novojogo_gameover.png').convert_alpha()
-        self.tela_inicial_button_image = pg.image.load('assets/imagens/botoes/tela_inicial.png').convert_alpha()
+        self.game_over_image = pg.image.load(
+            'assets/imagens/fundo_gameover.jpeg').convert_alpha()
+        self.game_over_text_image = pg.image.load(
+            'assets/imagens/componentes/gameover_text.png').convert_alpha()
+        self.new_game_button_image = pg.image.load(
+            'assets/imagens/botoes/novojogo_gameover.png').convert_alpha()
+        self.tela_inicial_button_image = pg.image.load(
+            'assets/imagens/botoes/tela_inicial.png').convert_alpha()
         self.click_sound = pg.mixer.Sound('assets/effects/click.wav')
 
-        self.new_game_button = Button(250, 370, self.new_game_button_image, True)
-        self.tela_inicial_button = Button(490, 370, self.tela_inicial_button_image, True)
+        self.new_game_button = Button(
+            250, 370, self.new_game_button_image, True)
+        self.tela_inicial_button = Button(
+            490, 370, self.tela_inicial_button_image, True)
         self.text_font = pg.font.SysFont("Arial", 30)
 
     def handle_escape(self):
@@ -54,4 +60,5 @@ class GameOverState(State):
         self.screen.blit(self.game_over_text_image, (180, 220))
         self.new_game_button.draw(self.screen)
         self.tela_inicial_button.draw(self.screen)
-        self.draw_text(f'Fase alcançada: {self.game.world.level}', self.text_font, "white", 325, 315)
+        self.draw_text(
+            f'Fase alcançada: {self.game.world.level}', self.text_font, "white", 325, 315)

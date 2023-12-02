@@ -16,9 +16,12 @@ class PauseState(State):
     def __init__(self, screen, clock, game):
         super().__init__(screen, clock, game)
         self.paused = True
-        self.pause_image = pg.image.load('assets/imagens/componentes/pause.png').convert_alpha()
-        self.close_button_image = pg.image.load('assets/imagens/botoes/close.png').convert_alpha()
-        self.back_button_image = pg.image.load('assets/imagens/botoes/back.png').convert_alpha()
+        self.pause_image = pg.image.load(
+            'assets/imagens/componentes/pause.png').convert_alpha()
+        self.close_button_image = pg.image.load(
+            'assets/imagens/botoes/close.png').convert_alpha()
+        self.back_button_image = pg.image.load(
+            'assets/imagens/botoes/back.png').convert_alpha()
         self.click_sound = pg.mixer.Sound('assets/effects/click.wav')
 
         self.close_button = Button(300, 370, self.close_button_image, True)
@@ -47,4 +50,3 @@ class PauseState(State):
         self.screen.blit(self.pause_image, (170, 100))
         self.back_button.draw(self.screen)
         self.close_button.draw(self.screen)
-        
