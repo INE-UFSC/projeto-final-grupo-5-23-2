@@ -394,7 +394,7 @@ def tela_win():
   screen.blit(win_image, (0, 0))
   screen.blit(congratulations_image, (150, 220))
   screen.blit(credits_image, (50, 600))
-  continue_button = Button(350, 350, continue_button_image, True)
+  continue_button = Button(370, 350, continue_button_image, True)
   continue_button.draw(screen)
 
   while win:
