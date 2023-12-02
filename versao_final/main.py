@@ -1,4 +1,5 @@
 import pygame as pg
+from pygame import mixer
 import json
 from enemy import InimigoFraco, InimigoNormal, InimigoElite, InimigoForte
 from world import World
@@ -36,7 +37,6 @@ def draw_text(text, font, text_color, x, y):
 ########################################################
 #têm q colocar dentro de play, pq sao variaveis externas. Serao atributos futuramente
 
-
 #mapa
 map_image = pg.image.load('levels/default.png').convert_alpha()
 
@@ -73,6 +73,21 @@ pause_image = pg.image.load('assets/imagens/componentes/pause.png').convert_alph
 close_button_image = pg.image.load('assets/imagens/botoes/close.png').convert_alpha()
 back_button_image = pg.image.load('assets/imagens/botoes/back.png').convert_alpha()
 
+  #game over
+game_over_text_image = pg.image.load('assets/imagens/componentes/gameover_text.png').convert_alpha()
+tela_inicial_button_image = pg.image.load('assets/imagens/botoes/tela_inicial.png').convert_alpha()
+game_over_image = pg.image.load('assets/imagens/fundo_gameover.jpeg').convert_alpha()
+new_game_gameover_button_image = pg.image.load('assets/imagens/botoes/novojogo_gameover.png').convert_alpha()
+
+  #win
+continue_button_image = pg.image.load('assets/imagens/botoes/continuar.png').convert_alpha()
+win_image = pg.image.load('assets/imagens/win.jpeg').convert_alpha()
+congratulations_image = pg.image.load('assets/imagens/congratulations.png').convert_alpha()
+credits_image = pg.image.load('assets/imagens/credits.png').convert_alpha()
+
+  #musicas e sons
+  
+
 #pegando o arquivo json para usar como fase:
 with open('levels/default.tmj') as file:
   world_data = json.load(file)
@@ -100,7 +115,6 @@ def decidir_tipo_inimigo():
   else:
     return InimigoForte(world.waypoints, enemy_image3)
 #por enquanto o inimigo elite ta gerando o inimigo forte mesmo
-
 
 def upgrade_turret(turret, turret_sheet2, turret_sheet3):
   #teria como concatenar o numero +1 mas deu preguica
@@ -147,30 +161,24 @@ def clear_selection():
 enemy_group = pg.sprite.Group()
 turret_group = pg.sprite.Group()
 
-############################################################################Isso aqui deve dar pra ficar só no play()
-#create buttons 
-turret_button = Button(c.SCREEN_WIDTH + 30, 120, buy_turret_image, True)
-cancel_button = Button(c.SCREEN_WIDTH + 50, 180, cancel_image, True)
-upgrade_button = Button(c.SCREEN_WIDTH + 5, 180, upgrade_turret_image, True)
-begin_round_button = Button(c.SCREEN_WIDTH + 60, 300, begin_round_image, True)
-acelerar_button = Button(c.SCREEN_WIDTH + 50, 300, acelerar_image, False)
-#enquanto segurar o b otao o jogo acelera
-
-############################################################################
 
 #tela inicial
 def init():
-  pg.display.set_caption('Tower Defense')
+
   new_game_button = Button(230, 280, new_game_button_image, True)
   leave_button = Button(230, 380, leave_button_image, True)
   records_button = Button(230, 480, records_button_image, True)
+  iniciar = True
+  
 
-  while True:
+  while iniciar:
     clock.tick(c.FPS)
     for event in pg.event.get():
       if event.type == pg.QUIT:
+        iniciar = False
         pg.quit()
         quit()
+        
       if event.type == pg.MOUSEBUTTONDOWN:
         if new_game_button.draw(screen):
           play()
@@ -188,15 +196,22 @@ def init():
 
     pg.display.update()
 
-
 #game loop
 def play():
+  #musica
+
   #algumas variaveis importantes
   ultimo_spawn_inimigo = pg.time.get_ticks()
   placing_turrets = False
   selected_turret = None
   level_comecou = False
   game_over = False
+
+  turret_button = Button(c.SCREEN_WIDTH + 30, 120, buy_turret_image, True)
+  cancel_button = Button(c.SCREEN_WIDTH + 50, 180, cancel_image, True)
+  upgrade_button = Button(c.SCREEN_WIDTH + 5, 180, upgrade_turret_image, True)
+  begin_round_button = Button(c.SCREEN_WIDTH + 60, 300, begin_round_image, True)
+  acelerar_button = Button(c.SCREEN_WIDTH + 50, 300, acelerar_image, False)
 
   run = True
   while run:
@@ -209,11 +224,11 @@ def play():
     if not game_over:
       if world.health <= 0:
         game_over = True
-        tela_game_over(False)
+        tela_game_over()
       
       if world.level > c.LEVELS_TOTAIS:
         game_over = True
-        tela_game_over(True)
+        tela_win()
 
 
     #atualizar grupos
@@ -285,6 +300,8 @@ def play():
       
       if event.type == pg.QUIT:
         run = False
+        pg.quit()
+        quit()
       
       if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
         mouse_pos = pg.mouse.get_pos()
@@ -302,7 +319,6 @@ def play():
 
     #update display
     pg.display.flip()
-
 
 #Para pausar
 def pause():
@@ -327,21 +343,62 @@ def pause():
           quit()
     pg.display.update()
 
-#tela game over (a fazer)
-def tela_game_over(resultado):
-  if resultado:
-    # ganhou
-    pass
-  else:
-    #perdeu
-    pass
+#tela game over
+def tela_game_over():
+  clock.tick(c.FPS)
+  game_over = True
+
+  screen.blit(game_over_image, (0, 0))
+  screen.blit(game_over_text_image, (180, 220))
+  new_game_button = Button(250, 370, new_game_gameover_button_image, True)
+  tela_inicial_button = Button(490, 370, tela_inicial_button_image, True)
+  new_game_button.draw(screen)
+  tela_inicial_button.draw(screen)
+  draw_text(f'Fase alcançada: {world.level}', text_font, "white", 325, 315)
+
+  while game_over:    
+    for event in pg.event.get():
+      if event.type == pg.QUIT:
+        pg.quit()
+        quit()
+      if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+        if new_game_button.draw(screen):
+          game_over = False
+          restart()
+        elif tela_inicial_button.draw(screen):
+          game_over = False
+          init()
+
+    pg.display.update()
+
+#tela vitoria
+def tela_win():
+  clock.tick(c.FPS)
+  win = True
+  screen.blit(win_image, (0, 0))
+  screen.blit(congratulations_image, (150, 220))
+  screen.blit(credits_image, (50, 600))
+  continue_button = Button(350, 350, continue_button_image, True)
+  continue_button.draw(screen)
+
+  while win:
+    for event in pg.event.get():
+      if event.type == pg.QUIT:
+        pg.quit()
+        quit()
+      if event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
+        if continue_button.draw(screen) == 1:
+          init()
+
+    pg.display.update()
+
 # o restart aqui terá que 1) rodar a funcao jogar de novo; e 2) resetar todas as classes e objetos q nós tínhamos
 # basicamente rodará a nossa classe principal de novo (o que ainda n foi feito). Ent, n precisa de definir a funcao restart.
-
 def restart():
   world = World(world_data, map_image)
   #etc
 
 init()
+
 
 pg.quit()
