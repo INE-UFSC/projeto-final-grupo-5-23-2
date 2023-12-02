@@ -4,7 +4,7 @@ import math
 
 
 class Enemy(pg.sprite.Sprite):
-    def __init__(self, waypoints, image):
+    def __init__(self, waypoints, image, speed, health, reward, forca):
         pg.sprite.Sprite.__init__(self)
         self.waypoints = waypoints
         self.pos = Vector2(self.waypoints[0]) + Vector2(32, 0)
@@ -15,6 +15,12 @@ class Enemy(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
     # para mim(murta): world so esta para adicionar dinheiro, pode mudar para player e como atributo de inicializacao depois
+
+        self.speed = speed
+        self.health = health
+        self.reward = reward
+        self.forca = forca
+
 
     def update(self, world):
         self.move(world)
@@ -62,33 +68,19 @@ class Enemy(pg.sprite.Sprite):
 
 class InimigoFraco(Enemy):
     def __init__(self, waypoints, image):
-        self.speed = 0.5
-        self.health = 10
-        self.reward = 10
-        self.forca = 1
-        super().__init__(waypoints, image)
+        super().__init__(waypoints, image, 0.5, 10, 10, 1)
 
 
 class InimigoNormal(Enemy):
     def __init__(self, waypoints, image):
-        self.speed = 1.8
-        self.health = 20
-        self.reward = 20
-        self.forca = 2
-        super().__init__(waypoints, image)
+        super().__init__(waypoints, image, 1.8, 20, 20, 2)
 
 
 class InimigoForte(Enemy):
     def __init__(self, waypoints, image):
-        self.speed = 2.5
-        self.health = 50
-        self.reward = 50
-        self.forca = 10
-        super().__init__(waypoints, image)
+        super().__init__(waypoints, image, 2.5, 50, 50, 10)
 
 
 class InimigoElite(Enemy):
     def __init__(self, waypoints, image):
-        self.speed = 1
-        self.health = 500
-        super().__init__(waypoints, image)
+        super().__init__(waypoints, image, 1, 500, 300, 30)
