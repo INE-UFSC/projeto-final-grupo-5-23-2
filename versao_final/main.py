@@ -58,6 +58,10 @@ enemy_image3 = pg.image.load('assets/imagens/inimigos/enemy_3.png').convert_alph
 
 #enemy_image = pg.transform.scale_by(enemy_image, 1/8) nao apagar
 
+#outras imagens
+coin_image = pg.image.load('assets/imagens/componentes/coin.png').convert_alpha()
+life_image = pg.image.load('assets/imagens/componentes/life.png').convert_alpha()
+
 #botoes imagens
 buy_turret_image = pg.image.load('assets/imagens/botoes/buy_turret.png').convert_alpha()
 cancel_image = pg.image.load('assets/imagens/botoes/cancel.png').convert_alpha()
@@ -222,6 +226,7 @@ def play():
   begin_round_button = Button(c.SCREEN_WIDTH + 60, 300, begin_round_image, True)
   acelerar_button = Button(c.SCREEN_WIDTH + 50, 300, acelerar_image, False)
 
+
   run = True
   while run:
 
@@ -253,6 +258,9 @@ def play():
 
     #desenharlevel
     world.draw(screen)
+
+    #screen.blit(life_image, (0, 0))Para quando for melhorar a hud
+    #screen.blit(coin_image, (0, 0))
 
     #desenhargrupos
     enemy_group.draw(screen)
