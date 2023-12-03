@@ -2,4 +2,11 @@ Esse diretório será utilizado para a última etapa do projeto, na qual a vers�
 
 self.força: quantidade de dano que cada enemy causa ao health do jogador. Se chegar a 0, o jogador perde.
 
-adicionar som às torres
+adicionar som às torres (feito)
+
+gerenciador de torres para abstrair o main
+
+player tera que ter um nome para a área de recordes
+persistência???
+
+interessante quando dar fast forward a cor do botao mudar

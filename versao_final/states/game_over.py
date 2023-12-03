@@ -3,7 +3,6 @@ import constants as c
 import json
 
 from button import Button
-from world import World
 from pygame import mixer
 from enemy import InimigoFraco, InimigoNormal, InimigoElite, InimigoForte
 from turret import TurretLevel1, TurretLevel2, TurretLevel3
@@ -61,4 +60,4 @@ class GameOverState(State):
         self.new_game_button.draw(self.screen)
         self.tela_inicial_button.draw(self.screen)
         self.draw_text(
-            f'Fase alcançada: {self.game.world.level}', self.text_font, "white", 325, 315)
+            f'Fase alcançada: {self.game.ControladorLevel.level}', self.text_font, "white", 325, 315)

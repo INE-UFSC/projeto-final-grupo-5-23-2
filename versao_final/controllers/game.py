@@ -2,8 +2,9 @@ import pygame as pg
 import constants as c
 import json
 
-from world import World
+from controllers.controlador_level import ControladorLevel
 from enemy import InimigoFraco, InimigoNormal, InimigoForte
+from world import World
 
 from states.game_over import GameOverState
 from states.game import GameState
@@ -26,14 +27,17 @@ class GameController:
         self.font = pg.font.SysFont("Arial", 30)
         self.running = True
         self.state = None
+
         with open('levels/default.tmj') as file:
             world_data = json.load(file)
+        
         self.world = World(world_data, map_image)
-        self.world.process_data()
-        self.world.process_inimigos()
+        self.ControladorLevel = ControladorLevel()
+
         self.enemy_group = pg.sprite.Group()
         self.turret_group = pg.sprite.Group()
 
+    #futuramente vou passar essa funcao para controlador_level
     def decidir_tipo_inimigo(self):
         enemy_image1 = pg.image.load(
             'assets/imagens/inimigos/enemy_1.png').convert_alpha()
@@ -42,8 +46,8 @@ class GameController:
         enemy_image3 = pg.image.load(
             'assets/imagens/inimigos/enemy_3.png').convert_alpha()
 
-        tipo = self.world.lista_inimigos[self.world.inimigos_spawnados]
-        self.world.inimigos_spawnados += 1
+        tipo = self.ControladorLevel.lista_inimigos[self.ControladorLevel.inimigos_spawnados]
+        self.ControladorLevel.inimigos_spawnados += 1
         if tipo == "fraco":
             return InimigoFraco(self.world.waypoints, enemy_image1)
         elif tipo == "normal":

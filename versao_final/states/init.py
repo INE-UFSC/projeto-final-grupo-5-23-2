@@ -3,7 +3,7 @@ import constants as c
 import json
 
 from button import Button
-from world import World
+
 from pygame import mixer
 from enemy import InimigoFraco, InimigoNormal, InimigoElite, InimigoForte
 from turret import TurretLevel1, TurretLevel2, TurretLevel3

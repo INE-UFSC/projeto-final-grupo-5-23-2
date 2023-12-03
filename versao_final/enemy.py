@@ -14,7 +14,6 @@ class Enemy(pg.sprite.Sprite):
         self.image = pg.transform.rotate(self.original_image, self.angle)
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
-    # para mim(murta): world so esta para adicionar dinheiro, pode mudar para player e como atributo de inicializacao depois
 
         self.speed = speed
         self.health = health
@@ -22,28 +21,27 @@ class Enemy(pg.sprite.Sprite):
         self.forca = forca
 
 
-    def update(self, world):
-        self.move(world)
+    def update(self, ControladorLevel):
+        self.move(ControladorLevel)
         self.rotate()
-        self.checar_vivo(world)
+        self.checar_vivo(ControladorLevel)
     # checa todos os "ciclos"de clock
 
-    def move(self, world):
+    def move(self, ControladorLevel):
         # define o target waypoint
         if self.target_waypoint < len(self.waypoints):
             self.target = Vector2(self.waypoints[self.target_waypoint])
             self.movement = self.target - self.pos
         else:
             # ja chegou, n ha mais waypoint
-            world.health -= self.forca
-            world.inimigos_missados += 1
+            ControladorLevel.inimigo_chegou(self)
             self.kill()
 
         # calcula distancia
         dist = self.movement.length()
         # checa se distancia n seria menor que o speed  para o inimigo nao andar " demais"
-        if dist >= (self.speed*world.velocidade_jogo):
-            self.pos += self.movement.normalize() * (self.speed*world.velocidade_jogo)
+        if dist >= (self.speed*ControladorLevel.velocidade_jogo):
+            self.pos += self.movement.normalize() * (self.speed*ControladorLevel.velocidade_jogo)
         else:
             if dist != 0:
                 self.pos += self.movement.normalize() * dist
@@ -59,10 +57,10 @@ class Enemy(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
 
-    def checar_vivo(self, world):
+    def checar_vivo(self, ControladorLevel):
         if self.health <= 0:
-            world.money += self.reward
-            world.inimigos_killados += 1
+            ControladorLevel.player.money += self.reward
+            ControladorLevel.inimigos_killados += 1
             self.kill()
 
 

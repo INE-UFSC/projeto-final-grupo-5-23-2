@@ -51,14 +51,14 @@ class Turret(pg.sprite.Sprite):
             animation_list.append(temp_img)
         return animation_list
 
-    def update(self, enemy_group, world):
+    def update(self, enemy_group, ControladorLevel):
         if self.target:
             self.play_animation()
         else:
-            if pg.time.get_ticks() - self.last_shot > (self.cooldown/world.velocidade_jogo):
+            if pg.time.get_ticks() - self.last_shot > (self.cooldown/ControladorLevel.velocidade_jogo):
                 self.pick_target(enemy_group)
-    # ao inves de deixar self.cooldown/world.velocidade_jogo aqui, trocar eles para uma variavel self na hora de criar
-    # o velocidade_jogo tbm n será atributo de world, mas sim de outra classed
+    # ao inves de deixar self.cooldown/ControladorLevel.velocidade_jogo aqui, trocar eles para uma variavel self na hora de criar
+    # o velocidade_jogo tbm n será atributo de ControladorLevel, mas sim de outra classed
 
     def pick_target(self, enemy_group):
         x_dist = 0

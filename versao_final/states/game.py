@@ -3,7 +3,6 @@ import constants as c
 import json
 
 from button import Button
-from world import World
 from pygame import mixer
 from enemy import InimigoFraco, InimigoNormal, InimigoElite, InimigoForte
 from turret import TurretLevel1, TurretLevel2, TurretLevel3
@@ -52,6 +51,7 @@ class GameState(State):
 
         self.ultimo_spawn_inimigo = pg.time.get_ticks()
         self.world = game.world  # Adicione esta linha
+        self.ControladorLevel = game.ControladorLevel
         self.fonte1 = pg.font.SysFont("Consolas", 25, bold=True)
         self.click_sound = mixer.Sound('assets/effects/click.wav')
         self.cursor_turret = pg.image.load(
@@ -80,11 +80,10 @@ class GameState(State):
                     break
                 # ver se tem dinheiro rs
             if space_is_free:
-                if self.world.money >= c.BUY_COST:
+                if self.ControladorLevel.player.tentar_comprar():
                     new_turret = TurretLevel1(
                         self.turret_sheet1, mouse_tile_x, mouse_tile_y)
                     self.game.turret_group.add(new_turret)
-                    self.world.money -= c.BUY_COST
 
     def upgrade_turret(self, turret, turret_sheet2, turret_sheet3):
         # teria como concatenar o numero +1 mas deu preguica
@@ -126,16 +125,16 @@ class GameState(State):
     def update(self):
 
         if not self.game_over:
-            if self.world.health <= 0:
+            if self.ControladorLevel.player.health <= 0:
                 self.game_over = True
                 self.game.set_game_over_state()
 
-            if self.world.level > 2:
+            if self.ControladorLevel.level > 2:
                 self.game_over = True
                 self.game.set_win_state()
 
-        self.game.enemy_group.update(self.world)
-        self.game.turret_group.update(self.game.enemy_group, self.world)
+        self.game.enemy_group.update(self.ControladorLevel)
+        self.game.turret_group.update(self.game.enemy_group, self.ControladorLevel)
 
         if self.selected_turret:
             self.selected_turret.selected = True
@@ -153,11 +152,11 @@ class GameState(State):
         for turret in self.game.turret_group:
             turret.draw(self.screen)
         self.printar_texto_na_tela(
-            (str(self.world.health)), self.fonte1, "grey100", c.SCREEN_WIDTH+125, 90)
+            (str(self.ControladorLevel.player.health)), self.fonte1, "grey100", c.SCREEN_WIDTH+125, 90)
         self.printar_texto_na_tela(
-            (str(int(self.world.money))), self.fonte1, "grey100", c.SCREEN_WIDTH+125, 140)
+            (str(int(self.ControladorLevel.player.money))), self.fonte1, "grey100", c.SCREEN_WIDTH+125, 140)
         self.printar_texto_na_tela(
-            (f"Level {str(self.world.level)}"), self.fonte1, "grey100", c.SCREEN_WIDTH+45, 40)
+            (f"Level {str(self.ControladorLevel.level)}"), self.fonte1, "grey100", c.SCREEN_WIDTH+45, 40)
 
         if not self.game_over:
             if not self.level_comecou:
@@ -165,20 +164,19 @@ class GameState(State):
                     self.click_sound.play()
                     self.level_comecou = True
             else:
-                self.world.velocidade_jogo = 1
+                self.ControladorLevel.velocidade_jogo = 1
                 if self.acelerar_button.draw(self.screen):
-                    self.world.velocidade_jogo = 3
-                if (pg.time.get_ticks() - self.ultimo_spawn_inimigo >= c.SPAWN_COOLDOWN / self.world.velocidade_jogo and self.world.inimigos_spawnados < len(self.world.lista_inimigos)):
+                    self.ControladorLevel.velocidade_jogo = 3
+                if (pg.time.get_ticks() - self.ultimo_spawn_inimigo >= c.SPAWN_COOLDOWN / self.ControladorLevel.velocidade_jogo and self.ControladorLevel.inimigos_spawnados < len(self.ControladorLevel.lista_inimigos)):
                     self.game.enemy_group.add(self.game.decidir_tipo_inimigo())
                     self.ultimo_spawn_inimigo = pg.time.get_ticks()
 
-        if self.world.checar_round_acabou():
+        if self.ControladorLevel.checar_round_acabou():
             self.level_comecou = False
 
         if self.selected_turret and self.selected_turret.nivel < 3:
             if self.upgrade_button.draw(self.screen):
-                if self.world.money >= c.UPGRADE_COST:
-                    self.world.money -= c.UPGRADE_COST
+                if self.ControladorLevel.player.tentar_upgradear():
                     self.selected_turret.kill()
                     self.game.turret_group.add(self.upgrade_turret(
                         self.selected_turret, self.turret_sheet2, self.turret_sheet3))
