@@ -6,7 +6,7 @@ from button import Button
 
 from pygame import mixer
 from enemy import InimigoFraco, InimigoNormal, InimigoElite, InimigoForte
-from turret import TurretLevel1, TurretLevel2, TurretLevel3
+from turret import Turret
 
 from states.state import State
 

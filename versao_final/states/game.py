@@ -5,7 +5,7 @@ import json
 from button import Button
 from pygame import mixer
 from enemy import InimigoFraco, InimigoNormal, InimigoElite, InimigoForte
-from turret import Turret, TurretLevel1, TurretLevel2, TurretLevel3
+from turret import Turret, FarmingTurret
 from states.state import State
 
 
@@ -62,7 +62,10 @@ class GameState(State):
             'assets/imagens/torres/turret_2.png').convert_alpha()
         self.turret_sheet3 = pg.image.load(
             'assets/imagens/torres/turret_3.png').convert_alpha()
-
+        self.farm_turret_sheet = pg.image.load(
+            'assets/imagens/torres/Tower.png').convert_alpha()
+        self.farm_turret_sheet = pg.transform.scale_by(self.farm_turret_sheet, 1/6)
+        
     def create_turret(self, mouse_pos):
         mouse_tile_x = mouse_pos[0] // c.TILE_SIZE
         mouse_tile_y = mouse_pos[1] // c.TILE_SIZE
@@ -164,8 +167,10 @@ class GameState(State):
 
         if self.ControladorLevel.checar_round_acabou():
             self.level_comecou = False
+            for turret in self.game.turret_group:
+                turret.ativar(self.ControladorLevel.player)
 
-        if self.selected_turret:
+        if self.selected_turret and self.selected_turret.level < self.selected_turret.max_level:
             if self.upgrade_button.draw(self.screen):
                 if self.ControladorLevel.player.tentar_upgradear():
                     self.upgrade_turret(self.selected_turret)

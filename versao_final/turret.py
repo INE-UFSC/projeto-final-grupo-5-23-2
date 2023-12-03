@@ -2,9 +2,30 @@ import pygame as pg
 from pygame import mixer
 import math
 import constants as c
+from abc import ABC, abstractmethod
 
+class Tower(ABC):
+    def __init__(self):
+        pass
 
-class Turret(pg.sprite.Sprite):
+    @abstractmethod
+    def draw(self, surface):
+        pass
+
+    def update(self, enemy, controlador):
+        pass
+
+    def ativar(self, player):
+        pass
+
+    def calcular_tiles(self, tile_x, tile_y):
+        self.tile_x = tile_x
+        self.tile_y = tile_y
+
+        self.x = (self.tile_x + 0.5) * c.TILE_SIZE
+        self.y = (self.tile_y + 0.5) * c.TILE_SIZE
+
+class Turret(pg.sprite.Sprite, Tower):
 
     def __init__(self, sprite_sheet, tile_x, tile_y, range, cooldown, damage):
         pg.sprite.Sprite.__init__(self)
@@ -17,14 +38,10 @@ class Turret(pg.sprite.Sprite):
         self.cooldown = cooldown
         self.damage = damage
 
-        self.tile_x = tile_x
-        self.tile_y = tile_y
-
-        self.x = (self.tile_x + 0.5) * c.TILE_SIZE
-        self.y = (self.tile_y + 0.5) * c.TILE_SIZE
+        self.calcular_tiles(tile_x, tile_y)
 
         self.sprite_sheet = sprite_sheet
-        self.max_level = len(sprite_sheet)
+        self.max_level = len(sprite_sheet)-1
         self.animation_list = self.load_images()
         self.frame_index = 0
         self.update_time = pg.time.get_ticks()
@@ -35,14 +52,7 @@ class Turret(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = (self.x, self.y)
 
-        self.range_image = pg.Surface((self.range * 2, self.range * 2))
-        self.range_image.fill((0, 0, 0))
-        self.range_image.set_colorkey((0, 0, 0))
-        pg.draw.circle(self.range_image, "grey100",
-                       (self.range, self.range), self.range)
-        self.range_image.set_alpha(100)
-        self.range_rect = self.range_image.get_rect()
-        self.range_rect.center = self.rect.center
+        self.desenhar_range()
     
     def upgrade(self):
         if self.level < self.max_level:
@@ -67,8 +77,6 @@ class Turret(pg.sprite.Sprite):
         else:
             if pg.time.get_ticks() - self.last_shot > (self.cooldown/ControladorLevel.velocidade_jogo):
                 self.pick_target(enemy_group)
-    # ao inves de deixar self.cooldown/ControladorLevel.velocidade_jogo aqui, trocar eles para uma variavel self na hora de criar
-    # o velocidade_jogo tbm n será atributo de ControladorLevel, mas sim de outra classed
 
     def pick_target(self, enemy_group):
         x_dist = 0
@@ -105,3 +113,38 @@ class Turret(pg.sprite.Sprite):
         surface.blit(self.image, self.rect)
         if self.selected:
             surface.blit(self.range_image, self.range_rect)
+
+    def desenhar_range(self):
+        self.range_image = pg.Surface((self.range * 2, self.range * 2))
+        self.range_image.fill((0, 0, 0))
+        self.range_image.set_colorkey((0, 0, 0))
+        pg.draw.circle(self.range_image, "grey100",
+                       (self.range, self.range), self.range)
+        self.range_image.set_alpha(100)
+        self.range_rect = self.range_image.get_rect()
+        self.range_rect.center = self.rect.center
+    
+class FarmingTurret(pg.sprite.Sprite, Tower):
+    def __init__(self, image, tile_x, tile_y):
+        pg.sprite.Sprite.__init__(self)
+
+        self.image = image
+        
+        self.calcular_tiles(tile_x, tile_y)
+
+        self.money_per_turn = c.MONEY_PER_TURN_TORRE
+        self.rect = self.image.get_rect()
+
+        self.level = 1
+        self.max_level = 1
+    
+    def ativar(self, player):
+        player.money += self.money_per_turn
+    
+    def draw(self, surface):
+        self.rect.center = (self.x, self.y)
+        surface.blit(self.image, self.rect)
+    
+
+#não vai ter upgrade pois não achei uma sprite para colocar como upgrade kkk
+
