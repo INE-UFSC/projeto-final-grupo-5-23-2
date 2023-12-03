@@ -5,7 +5,7 @@ import json
 from button import Button
 from pygame import mixer
 from enemy import InimigoFraco, InimigoNormal, InimigoElite, InimigoForte
-from turret import TurretLevel1, TurretLevel2, TurretLevel3
+from turret import Turret, TurretLevel1, TurretLevel2, TurretLevel3
 from states.state import State
 
 
@@ -81,21 +81,12 @@ class GameState(State):
                 # ver se tem dinheiro rs
             if space_is_free:
                 if self.ControladorLevel.player.tentar_comprar():
-                    new_turret = TurretLevel1(
-                        self.turret_sheet1, mouse_tile_x, mouse_tile_y)
+                    new_turret = Turret(
+                        [self.turret_sheet1, self.turret_sheet2, self.turret_sheet3] , mouse_tile_x, mouse_tile_y, 90, 600, 6)
                     self.game.turret_group.add(new_turret)
 
-    def upgrade_turret(self, turret, turret_sheet2, turret_sheet3):
-        # teria como concatenar o numero +1 mas deu preguica
-        if turret.nivel == 1:
-            newturret = TurretLevel2(
-                turret_sheet2, turret.tile_x, turret.tile_y)
-            return newturret
-
-        else:
-            newturret = TurretLevel3(
-                turret_sheet3, turret.tile_x, turret.tile_y)
-            return newturret
+    def upgrade_turret(self, turret):
+        turret.upgrade()
 
     def handle_escape(self):
         self.game.set_pause_state()
@@ -174,13 +165,11 @@ class GameState(State):
         if self.ControladorLevel.checar_round_acabou():
             self.level_comecou = False
 
-        if self.selected_turret and self.selected_turret.nivel < 3:
+        if self.selected_turret:
             if self.upgrade_button.draw(self.screen):
                 if self.ControladorLevel.player.tentar_upgradear():
-                    self.selected_turret.kill()
-                    self.game.turret_group.add(self.upgrade_turret(
-                        self.selected_turret, self.turret_sheet2, self.turret_sheet3))
-                    selected_turret = None
+                    self.upgrade_turret(self.selected_turret)
+                    self.selected_turret = None
 
         if self.turret_button.draw(self.screen):
             self.click_sound.play()

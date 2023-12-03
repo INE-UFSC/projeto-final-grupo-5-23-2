@@ -6,15 +6,15 @@ import constants as c
 
 class Turret(pg.sprite.Sprite):
 
-    def __init__(self, sprite_sheet, tile_x, tile_y, range, cooldawn, nivel, damage):
+    def __init__(self, sprite_sheet, tile_x, tile_y, range, cooldown, damage):
         pg.sprite.Sprite.__init__(self)
         self.last_shot = pg.time.get_ticks()
         self.selected = False
         self.target = None
+        self.level = 0
 
         self.range = range
-        self.cooldown = cooldawn
-        self.nivel = nivel
+        self.cooldown = cooldown
         self.damage = damage
 
         self.tile_x = tile_x
@@ -24,6 +24,7 @@ class Turret(pg.sprite.Sprite):
         self.y = (self.tile_y + 0.5) * c.TILE_SIZE
 
         self.sprite_sheet = sprite_sheet
+        self.max_level = len(sprite_sheet)
         self.animation_list = self.load_images()
         self.frame_index = 0
         self.update_time = pg.time.get_ticks()
@@ -42,12 +43,21 @@ class Turret(pg.sprite.Sprite):
         self.range_image.set_alpha(100)
         self.range_rect = self.range_image.get_rect()
         self.range_rect.center = self.rect.center
+    
+    def upgrade(self):
+        if self.level < self.max_level:
+            self.level += 1
+            self.damage = self.damage + self.level * self.damage
+            self.cooldown = self.cooldown - self.cooldown * 0.3
+            self.range = self.range + self.level * 0.15
+            self.animation_list = self.load_images()
+            self.original_image = self.animation_list[self.frame_index]
 
     def load_images(self):
-        size = self.sprite_sheet.get_height()
+        size = self.sprite_sheet[self.level].get_height()
         animation_list = []
-        for x in range(self.sprite_sheet.get_width() // size):
-            temp_img = self.sprite_sheet.subsurface(x * size, 0, size, size)
+        for x in range(self.sprite_sheet[self.level].get_width() // size):
+            temp_img = self.sprite_sheet[self.level].subsurface(x * size, 0, size, size)
             animation_list.append(temp_img)
         return animation_list
 
@@ -95,24 +105,3 @@ class Turret(pg.sprite.Sprite):
         surface.blit(self.image, self.rect)
         if self.selected:
             surface.blit(self.range_image, self.range_rect)
-
-    # ideias para o delete:
-    # jogar o turret pra uma tile no meio do nada(sei lá)
-
-
-# para upgradear remove-se o turret da tile e instancia o mesmo porém de nível +1 (ideia)
-
-
-class TurretLevel1(Turret):
-    def __init__(self, sprite_sheet, tile_x, tile_y):
-        super().__init__(sprite_sheet, tile_x, tile_y, 90, 600, 1, 6)
-
-
-class TurretLevel2(Turret):
-    def __init__(self, sprite_sheet, tile_x, tile_y):
-        super().__init__(sprite_sheet, tile_x, tile_y, 110, 300, 2, 20)
-
-
-class TurretLevel3(Turret):
-    def __init__(self, sprite_sheet, tile_x, tile_y):
-        super().__init__(sprite_sheet, tile_x, tile_y, 125, 90, 3, 40)
