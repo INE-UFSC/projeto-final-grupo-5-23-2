@@ -18,6 +18,16 @@ class GameState(State):
         self.selected_turret = None
         self.level_comecou = False
         self.game_over = False
+
+        self.hud_image = pg.image.load(
+            'assets/imagens/hud.jpg').convert_alpha()
+        self.health_bar_image = pg.image.load(
+            'assets/imagens/componentes/health_bar.png').convert_alpha()
+        self.coin_bar_image = pg.image.load(
+            'assets/imagens/componentes/coin_bar.png').convert_alpha()
+        self.help_image = pg.image.load(
+            'assets/imagens/help.png').convert_alpha()
+
         buy_turret_image = pg.image.load(
             'assets/imagens/botoes/buy_turret.png').convert_alpha()
         cancel_image = pg.image.load(
@@ -28,16 +38,18 @@ class GameState(State):
             'assets/imagens/botoes/begin.png').convert_alpha()
         acelerar_image = pg.image.load(
             'assets/imagens/botoes/fast_forward.png').convert_alpha()
+
         self.turret_button = Button(
-            c.SCREEN_WIDTH + 30, 120, buy_turret_image, True)
+            c.SCREEN_WIDTH + 40, 350, buy_turret_image, True)
         self.cancel_button = Button(
-            c.SCREEN_WIDTH + 50, 180, cancel_image, True)
+            c.SCREEN_WIDTH + 40, 350, cancel_image, True)
         self.upgrade_button = Button(
-            c.SCREEN_WIDTH + 5, 180, upgrade_turret_image, True)
+            c.SCREEN_WIDTH + 40, 400, upgrade_turret_image, True)
         self.begin_round_button = Button(
-            c.SCREEN_WIDTH + 60, 300, begin_round_image, True)
+            c.SCREEN_WIDTH + 40, 300, begin_round_image, True)
         self.acelerar_button = Button(
-            c.SCREEN_WIDTH + 50, 300, acelerar_image, False)
+            c.SCREEN_WIDTH + 40, 300, acelerar_image, False)
+
         self.ultimo_spawn_inimigo = pg.time.get_ticks()
         self.world = game.world  # Adicione esta linha
         self.fonte1 = pg.font.SysFont("Consolas", 25, bold=True)
@@ -132,14 +144,20 @@ class GameState(State):
         self.world.draw(self.screen)
         self.game.enemy_group.draw(self.screen)
         self.game.turret_group.draw(self.screen)
+
+        self.screen.blit(self.hud_image, (c.SCREEN_WIDTH, 0))
+        self.screen.blit(self.health_bar_image, (c.SCREEN_WIDTH + 40, 80))
+        self.screen.blit(self.coin_bar_image, (c.SCREEN_WIDTH + 40, 130))
+        self.screen.blit(self.help_image, (c.SCREEN_WIDTH+30, 490))
+
         for turret in self.game.turret_group:
             turret.draw(self.screen)
         self.printar_texto_na_tela(
-            (str(self.world.health)), self.fonte1, "grey100", 0, 0)
+            (str(self.world.health)), self.fonte1, "grey100", c.SCREEN_WIDTH+125, 90)
         self.printar_texto_na_tela(
-            (str(int(self.world.money))), self.fonte1, "grey100", 0, 30)
+            (str(int(self.world.money))), self.fonte1, "grey100", c.SCREEN_WIDTH+125, 140)
         self.printar_texto_na_tela(
-            (f"level {str(self.world.level)}"), self.fonte1, "grey100", 0, 60)
+            (f"Level {str(self.world.level)}"), self.fonte1, "grey100", c.SCREEN_WIDTH+45, 40)
 
         if not self.game_over:
             if not self.level_comecou:
