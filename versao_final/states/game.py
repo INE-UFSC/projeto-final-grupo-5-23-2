@@ -22,6 +22,7 @@ class GameState(State):
         self.level_comecou = False
         self.game_over = False
         self.choosing_turret = False
+        self.tips_flag = False
 
         self.loader.hud_image = pg.image.load(
             'assets/imagens/hud.jpg').convert_alpha()
@@ -130,6 +131,12 @@ class GameState(State):
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_ESCAPE:
                     self.handle_escape()
+                if event.key == pg.K_SPACE:
+                    if self.tips_flag == False:
+                        self.tips_flag = True
+                    else:
+                        self.tips_flag = False
+
 
     def update(self):
 
@@ -147,6 +154,8 @@ class GameState(State):
 
         if self.selected_turret:
             self.selected_turret.selected = True
+
+
 
         self.screen.fill("grey100")
         self.world.draw(self.screen)
@@ -221,6 +230,9 @@ class GameState(State):
             if cursor_pos[0] <= c.SCREEN_WIDTH:
                 self.screen.blit(self.cursor_turret, cursor_rect)
 
+        if self.tips_flag == True:
+            self.screen.blit(pg.image.load(
+                            'assets/imagens/tips.png').convert_alpha(), (200, 170))
 
     def printar_texto_na_tela(self, text, fonte, text_col, x, y):
         img = fonte.render(text, True, text_col)

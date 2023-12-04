@@ -46,6 +46,6 @@ class PauseState(State):
         pg.display.update()
 
     def update(self):
-        self.screen.blit(self.pause_image, (170, 100))
+        self.screen.blit(self.pause_image, (180, 130))
         self.back_button.draw(self.screen)
         self.close_button.draw(self.screen)
