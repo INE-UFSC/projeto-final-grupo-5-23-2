@@ -16,9 +16,12 @@ class GameState(State):
         # Inicialize suas variáveis e grupos aqui, conforme necessário
         self.loader = Loader(screen, clock, game)
         self.placing_turrets = False
+        self.placing_attack_turret = False
+        self.placing_farming_turret = False
         self.selected_turret = None
         self.level_comecou = False
         self.game_over = False
+        self.choosing_turret = False
 
         self.loader.hud_image = pg.image.load(
             'assets/imagens/hud.jpg').convert_alpha()
@@ -29,35 +32,39 @@ class GameState(State):
         self.loader.help_image = pg.image.load(
             'assets/imagens/help.png').convert_alpha()
 
-        buy_turret_image = pg.image.load(
-            'assets/imagens/botoes/buy_turret.png').convert_alpha()
-        cancel_image = pg.image.load(
-            'assets/imagens/botoes/cancel.png').convert_alpha()
-        upgrade_turret_image = pg.image.load(
-            'assets/imagens/botoes/upgrade_turret.png').convert_alpha()
-        begin_round_image = pg.image.load(
-            'assets/imagens/botoes/begin.png').convert_alpha()
-        acelerar_image = pg.image.load(
-            'assets/imagens/botoes/fast_forward.png').convert_alpha()
 
         self.turret_button = Button(
-            c.SCREEN_WIDTH + 40, 350, buy_turret_image, True)
+            c.SCREEN_WIDTH + 40, 350, pg.image.load(
+            'assets/imagens/botoes/buy_turret.png').convert_alpha(), True)
+        
+        self.farm_turret_button = Button(
+            c.SCREEN_WIDTH +40, 450, pg.image.load(
+                'assets/imagens/botoes/farm_turret.png').convert_alpha(), True)
+        self.attack_turret_button = Button(
+            c.SCREEN_WIDTH +40, 400, pg.image.load(
+                'assets/imagens/botoes/attack_turret.png').convert_alpha(), True)
+
         self.cancel_button = Button(
-            c.SCREEN_WIDTH + 40, 350, cancel_image, True)
+            c.SCREEN_WIDTH + 40, 350, pg.image.load(
+            'assets/imagens/botoes/cancel.png').convert_alpha(), True)
         self.upgrade_button = Button(
-            c.SCREEN_WIDTH + 40, 400, upgrade_turret_image, True)
+            c.SCREEN_WIDTH + 40, 400, pg.image.load(
+            'assets/imagens/botoes/upgrade_turret.png').convert_alpha(), True)
         self.begin_round_button = Button(
-            c.SCREEN_WIDTH + 40, 300, begin_round_image, True)
+            c.SCREEN_WIDTH + 40, 300, pg.image.load(
+            'assets/imagens/botoes/begin.png').convert_alpha(), True)
         self.acelerar_button = Button(
-            c.SCREEN_WIDTH + 40, 300, acelerar_image, False)
+            c.SCREEN_WIDTH + 40, 300, pg.image.load(
+            'assets/imagens/botoes/fast_forward.png').convert_alpha(), False)
 
         self.ultimo_spawn_inimigo = pg.time.get_ticks()
         self.world = game.world  # Adicione esta linha
         self.ControladorLevel = game.ControladorLevel
         self.fonte1 = pg.font.SysFont("Consolas", 25, bold=True)
         self.click_sound = mixer.Sound('assets/effects/click.wav')
-        self.cursor_turret = pg.image.load(
-            'assets/imagens/torres/cursor_turret.png').convert_alpha()
+        self.cursor_turret = None
+        #self.cursor_turret = pg.image.load(
+            #'assets/imagens/torres/cursor_turret.png').convert_alpha()
         self.turret_sheet1 = pg.image.load(
             'assets/imagens/torres/turret_1.png').convert_alpha()
         self.turret_sheet2 = pg.image.load(
@@ -65,10 +72,10 @@ class GameState(State):
         self.turret_sheet3 = pg.image.load(
             'assets/imagens/torres/turret_3.png').convert_alpha()
         self.farm_turret_sheet = pg.image.load(
-            'assets/imagens/torres/Tower.png').convert_alpha()
+            'assets/imagens/torres/farming_turret.png').convert_alpha()
         self.farm_turret_sheet = pg.transform.scale_by(self.farm_turret_sheet, 1/6)
         
-    def create_turret(self, mouse_pos):
+    def create_turret(self, mouse_pos, placing_attack_turret, placing_farming_turret):
         mouse_tile_x = mouse_pos[0] // c.TILE_SIZE
         mouse_tile_y = mouse_pos[1] // c.TILE_SIZE
 
@@ -86,9 +93,15 @@ class GameState(State):
                 # ver se tem dinheiro rs
             if space_is_free:
                 if self.ControladorLevel.player.tentar_comprar():
-                    new_turret = Turret(
-                        [self.turret_sheet1, self.turret_sheet2, self.turret_sheet3] , mouse_tile_x, mouse_tile_y, 90, 600, 6)
-                    self.game.turret_group.add(new_turret)
+                    if placing_attack_turret == True:
+                        new_attack_turret = Turret([self.turret_sheet1, self.turret_sheet2, self.turret_sheet3] , mouse_tile_x, mouse_tile_y, 90, 600, 6)
+                        self.game.turret_group.add(new_attack_turret)
+                        placing_attack_turret = False
+
+                    if placing_farming_turret == True:
+                        new_farming_turret = FarmingTurret(self.farm_turret_sheet, mouse_tile_x, mouse_tile_y)
+                        self.game.turret_group.add(new_farming_turret)
+                        placing_farming_turret = False
 
     def upgrade_turret(self, turret):
         turret.upgrade()
@@ -109,7 +122,7 @@ class GameState(State):
                     self.selected_turret = None
                     self.game.clear_selection()
                     if self.placing_turrets:
-                        self.create_turret(mouse_pos)
+                        self.create_turret(mouse_pos, self.placing_attack_turret, self.placing_farming_turret)
                     else:
                         self.selected_turret = self.game.select_turret(
                             mouse_pos)
@@ -143,7 +156,7 @@ class GameState(State):
         self.screen.blit(self.loader.hud_image, (c.SCREEN_WIDTH, 0))
         self.screen.blit(self.loader.health_bar_image, (c.SCREEN_WIDTH + 40, 80))
         self.screen.blit(self.loader.coin_bar_image, (c.SCREEN_WIDTH + 40, 130))
-        self.screen.blit(self.loader.help_image, (c.SCREEN_WIDTH+30, 490))
+        self.screen.blit(self.loader.help_image, (c.SCREEN_WIDTH+30, 500))
 
         for turret in self.game.turret_group:
             turret.draw(self.screen)
@@ -180,16 +193,34 @@ class GameState(State):
 
         if self.turret_button.draw(self.screen):
             self.click_sound.play()
-            self.placing_turrets = True
+            self.choosing_turret = True            
+        
+        if self.choosing_turret == True:
+            if self.cancel_button.draw(self.screen):
+                self.click_sound.play()
+                self.placing_turrets = False
+                self.choosing_turret = False
+
+            if self.attack_turret_button.draw(self.screen):
+                self.placing_turrets = True
+                self.placing_farming_turret = False
+                self.placing_attack_turret = True
+                self.cursor_turret = pg.image.load(
+                            'assets/imagens/torres/cursor_turret.png').convert_alpha()
+            elif self.farm_turret_button.draw(self.screen):
+                self.placing_turrets = True
+                self.placing_attack_turret = False
+                self.placing_farming_turret = True
+                self.cursor_turret = pg.image.load(
+                            'assets/imagens/torres/cursor_farming_turret.png').convert_alpha()
+
         if self.placing_turrets == True:
             cursor_rect = self.cursor_turret.get_rect()
             cursor_pos = pg.mouse.get_pos()
             cursor_rect.center = cursor_pos
             if cursor_pos[0] <= c.SCREEN_WIDTH:
                 self.screen.blit(self.cursor_turret, cursor_rect)
-            if self.cancel_button.draw(self.screen):
-                self.click_sound.play()
-                self.placing_turrets = False
+
 
     def printar_texto_na_tela(self, text, fonte, text_col, x, y):
         img = fonte.render(text, True, text_col)

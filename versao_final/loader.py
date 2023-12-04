@@ -59,5 +59,5 @@ class Loader():
         self.turret_sheet3 = pg.image.load(
             'assets/imagens/torres/turret_3.png').convert_alpha()
         self.farm_turret_sheet = pg.image.load(
-            'assets/imagens/torres/Tower.png').convert_alpha()
+            'assets/imagens/torres/farming_turret.png').convert_alpha()
         self.farm_turret_sheet = pg.transform.scale_by(self.farm_turret_sheet, 1/6)
