@@ -64,8 +64,6 @@ class GameState(State):
         self.fonte1 = pg.font.SysFont("Consolas", 25, bold=True)
         self.click_sound = mixer.Sound('assets/effects/click.wav')
         self.cursor_turret = None
-        #self.cursor_turret = pg.image.load(
-            #'assets/imagens/torres/cursor_turret.png').convert_alpha()
         self.turret_sheet1 = pg.image.load(
             'assets/imagens/torres/turret_1.png').convert_alpha()
         self.turret_sheet2 = pg.image.load(
@@ -137,9 +135,7 @@ class GameState(State):
                     else:
                         self.tips_flag = False
 
-
     def update(self):
-
         if not self.game_over:
             if self.ControladorLevel.player.health <= 0:
                 self.game_over = True
@@ -154,8 +150,6 @@ class GameState(State):
 
         if self.selected_turret:
             self.selected_turret.selected = True
-
-
 
         self.screen.fill("grey100")
         self.world.draw(self.screen)
