@@ -15,16 +15,11 @@ class PauseState(State):
     def __init__(self, screen, clock, game):
         super().__init__(screen, clock, game)
         self.paused = True
-        self.pause_image = pg.image.load(
-            'assets/imagens/componentes/pause.png').convert_alpha()
-        self.close_button_image = pg.image.load(
-            'assets/imagens/botoes/close.png').convert_alpha()
-        self.back_button_image = pg.image.load(
-            'assets/imagens/botoes/back.png').convert_alpha()
         self.click_sound = pg.mixer.Sound('assets/effects/click.wav')
-
-        self.close_button = Button(300, 370, self.close_button_image, True)
-        self.back_button = Button(500, 370, self.back_button_image, True)
+        self.close_button = Button(300, 370, pg.image.load(
+            'assets/imagens/botoes/close.png').convert_alpha(), True)
+        self.back_button = Button(500, 370, pg.image.load(
+            'assets/imagens/botoes/back.png').convert_alpha(), True)
 
     def handle_escape(self):
         self.game.set_game_state()
@@ -46,6 +41,7 @@ class PauseState(State):
         pg.display.update()
 
     def update(self):
-        self.screen.blit(self.pause_image, (180, 130))
+        self.screen.blit(pg.image.load(
+            'assets/imagens/componentes/pause.png').convert_alpha(), (180, 130))
         self.back_button.draw(self.screen)
         self.close_button.draw(self.screen)

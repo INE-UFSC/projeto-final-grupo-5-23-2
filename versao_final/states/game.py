@@ -14,6 +14,7 @@ class GameState(State):
     def __init__(self, screen, clock, game):
         super().__init__(screen, clock, game)
         # Inicialize suas variáveis e grupos aqui, conforme necessário
+        self.ControladorLevel = game.ControladorLevel
         self.loader = Loader(screen, clock, game)
         self.placing_turrets = False
         self.placing_attack_turret = False
@@ -60,7 +61,6 @@ class GameState(State):
 
         self.ultimo_spawn_inimigo = pg.time.get_ticks()
         self.world = game.world  # Adicione esta linha
-        self.ControladorLevel = game.ControladorLevel
         self.fonte1 = pg.font.SysFont("Consolas", 25, bold=True)
         self.click_sound = mixer.Sound('assets/effects/click.wav')
         self.cursor_turret = None
