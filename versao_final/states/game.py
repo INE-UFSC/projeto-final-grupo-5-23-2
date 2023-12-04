@@ -7,24 +7,26 @@ from pygame import mixer
 from enemy import InimigoFraco, InimigoNormal, InimigoElite, InimigoForte
 from turret import Turret, FarmingTurret
 from states.state import State
+from loader import Loader
 
 
 class GameState(State):
     def __init__(self, screen, clock, game):
         super().__init__(screen, clock, game)
         # Inicialize suas variáveis e grupos aqui, conforme necessário
+        self.loader = Loader(screen, clock, game)
         self.placing_turrets = False
         self.selected_turret = None
         self.level_comecou = False
         self.game_over = False
 
-        self.hud_image = pg.image.load(
+        self.loader.hud_image = pg.image.load(
             'assets/imagens/hud.jpg').convert_alpha()
-        self.health_bar_image = pg.image.load(
+        self.loader.health_bar_image = pg.image.load(
             'assets/imagens/componentes/health_bar.png').convert_alpha()
-        self.coin_bar_image = pg.image.load(
+        self.loader.coin_bar_image = pg.image.load(
             'assets/imagens/componentes/coin_bar.png').convert_alpha()
-        self.help_image = pg.image.load(
+        self.loader.help_image = pg.image.load(
             'assets/imagens/help.png').convert_alpha()
 
         buy_turret_image = pg.image.load(
@@ -138,10 +140,10 @@ class GameState(State):
         self.game.enemy_group.draw(self.screen)
         self.game.turret_group.draw(self.screen)
 
-        self.screen.blit(self.hud_image, (c.SCREEN_WIDTH, 0))
-        self.screen.blit(self.health_bar_image, (c.SCREEN_WIDTH + 40, 80))
-        self.screen.blit(self.coin_bar_image, (c.SCREEN_WIDTH + 40, 130))
-        self.screen.blit(self.help_image, (c.SCREEN_WIDTH+30, 490))
+        self.screen.blit(self.loader.hud_image, (c.SCREEN_WIDTH, 0))
+        self.screen.blit(self.loader.health_bar_image, (c.SCREEN_WIDTH + 40, 80))
+        self.screen.blit(self.loader.coin_bar_image, (c.SCREEN_WIDTH + 40, 130))
+        self.screen.blit(self.loader.help_image, (c.SCREEN_WIDTH+30, 490))
 
         for turret in self.game.turret_group:
             turret.draw(self.screen)
