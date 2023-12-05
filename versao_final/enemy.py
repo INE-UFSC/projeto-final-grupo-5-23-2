@@ -71,7 +71,7 @@ class InimigoFraco(Enemy):
 
 class InimigoNormal(Enemy):
     def __init__(self, waypoints, image):
-        super().__init__(waypoints, image, 1.8, 40, 20, 2)
+        super().__init__(waypoints, image, 1.8, 30, 20, 2)
 
 
 class InimigoForte(Enemy):

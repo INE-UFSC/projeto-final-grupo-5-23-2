@@ -7,7 +7,7 @@ from pygame import mixer
 from player import Player
 from world import World
 
-class ControladorLevel():
+class ControladorLevel:
     def __init__(self):
 
         self.level = 1
