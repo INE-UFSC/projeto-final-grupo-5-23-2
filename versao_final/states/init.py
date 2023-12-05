@@ -18,8 +18,8 @@ class InitState(State):
             'assets/imagens/botoes/newgame.png').convert_alpha(), True)
         self.leave_button = Button(230, 380, pg.image.load(
             'assets/imagens/botoes/leave.png').convert_alpha(), True)
-        self.records_button = Button(230, 480, pg.image.load(
-            'assets/imagens/botoes/records.png').convert_alpha(), True)
+        # self.records_button = Button(230, 480, pg.image.load(
+        #     'assets/imagens/botoes/records.png').convert_alpha(), True)
         self.click_sound = mixer.Sound('assets/effects/click.wav')
         self.wallpaper_image = pg.image.load(
             'assets/imagens/wallpaper.jpeg').convert_alpha()
@@ -44,13 +44,9 @@ class InitState(State):
                     self.game.running = False
                     pg.quit()
                     quit()
-                elif self.records_button.draw(self.screen):
-                    self.click_sound.play()
-                    pass
 
     def update(self):
         self.screen.blit(self.wallpaper_image, (-40, 0))
         self.screen.blit(self.title_image, (35, 130))
         self.new_game_button.draw(self.screen)
         self.leave_button.draw(self.screen)
-        self.records_button.draw(self.screen)

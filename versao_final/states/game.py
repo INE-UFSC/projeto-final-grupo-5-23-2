@@ -141,7 +141,7 @@ class GameState(State):
                 self.game_over = True
                 self.game.set_game_over_state()
 
-            if self.ControladorLevel.level > 2:
+            if self.ControladorLevel.level > 10:
                 self.game_over = True
                 self.game.set_win_state()
 

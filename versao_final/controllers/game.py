@@ -37,6 +37,12 @@ class GameController:
         self.enemy_group = pg.sprite.Group()
         self.turret_group = pg.sprite.Group()
 
+    def restart(self):
+        self.ControladorLevel = ControladorLevel()
+        self.enemy_group = pg.sprite.Group()
+        self.turret_group = pg.sprite.Group()
+        self.set_init_state()
+
     #futuramente vou passar essa funcao para controlador_level
     def decidir_tipo_inimigo(self):
         enemy_image1 = pg.image.load(

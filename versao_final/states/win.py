@@ -31,7 +31,7 @@ class WinState(State):
                 if self.continue_button.draw(self.screen) == 1:
                     self.click_sound.play()
                     self.win = False
-                    self.game.set_init_state()
+                    self.game.restart()
 
         pg.display.update()
 
