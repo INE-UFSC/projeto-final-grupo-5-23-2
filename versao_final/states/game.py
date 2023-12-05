@@ -173,7 +173,7 @@ class GameState(State):
 
         if self.tips_flag == True:
             self.screen.blit(pg.image.load(
-                            'assets/imagens/tips.png').convert_alpha(), (200, 170))
+                            'assets/imagens/tips.png').convert_alpha(), (200, 130))
 
     def printar_texto_na_tela(self, text, fonte, text_col, x, y):
         img = fonte.render(text, True, text_col)
