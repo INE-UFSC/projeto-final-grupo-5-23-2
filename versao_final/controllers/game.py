@@ -28,6 +28,8 @@ class GameController:
         self.running = True
         self.state = None
 
+        self.started = False
+
         with open('levels/default.tmj') as file:
             world_data = json.load(file)
         

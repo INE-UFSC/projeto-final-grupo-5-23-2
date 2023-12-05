@@ -32,8 +32,8 @@ class PauseState(State):
             elif event.type == pg.MOUSEBUTTONDOWN and event.button == 1:
                 if self.back_button.draw(self.screen):
                     self.click_sound.play()
-                    self.game.set_game_state()
                     self.paused = False
+                    self.game.set_game_state()                  
                 elif self.close_button.draw(self.screen):
                     self.click_sound.play()
                     pg.quit()

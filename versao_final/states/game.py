@@ -13,66 +13,15 @@ from loader import Loader
 class GameState(State):
     def __init__(self, screen, clock, game):
         super().__init__(screen, clock, game)
-        # Inicialize suas variáveis e grupos aqui, conforme necessário
+        
+        #controlador de level, world e game referentes
         self.ControladorLevel = game.ControladorLevel
         self.loader = Loader(screen, clock, game)
-        self.placing_turrets = False
-        self.placing_attack_turret = False
-        self.placing_farming_turret = False
-        self.selected_turret = None
-        self.level_comecou = False
-        self.game_over = False
-        self.choosing_turret = False
-        self.tips_flag = False
+        self.world = game.world
 
-        self.loader.hud_image = pg.image.load(
-            'assets/imagens/hud.jpg').convert_alpha()
-        self.loader.health_bar_image = pg.image.load(
-            'assets/imagens/componentes/health_bar.png').convert_alpha()
-        self.loader.coin_bar_image = pg.image.load(
-            'assets/imagens/componentes/coin_bar.png').convert_alpha()
-        self.loader.help_image = pg.image.load(
-            'assets/imagens/help.png').convert_alpha()
+        #declara algumas variáveis
+        self.variaveis()
 
-
-        self.turret_button = Button(
-            c.SCREEN_WIDTH + 40, 350, pg.image.load(
-            'assets/imagens/botoes/buy_turret.png').convert_alpha(), True)
-        
-        self.farm_turret_button = Button(
-            c.SCREEN_WIDTH +40, 450, pg.image.load(
-                'assets/imagens/botoes/farm_turret.png').convert_alpha(), True)
-        self.attack_turret_button = Button(
-            c.SCREEN_WIDTH +40, 400, pg.image.load(
-                'assets/imagens/botoes/attack_turret.png').convert_alpha(), True)
-
-        self.cancel_button = Button(
-            c.SCREEN_WIDTH + 40, 350, pg.image.load(
-            'assets/imagens/botoes/cancel.png').convert_alpha(), True)
-        self.upgrade_button = Button(
-            c.SCREEN_WIDTH + 40, 400, pg.image.load(
-            'assets/imagens/botoes/upgrade_turret.png').convert_alpha(), True)
-        self.begin_round_button = Button(
-            c.SCREEN_WIDTH + 40, 300, pg.image.load(
-            'assets/imagens/botoes/begin.png').convert_alpha(), True)
-        self.acelerar_button = Button(
-            c.SCREEN_WIDTH + 40, 300, pg.image.load(
-            'assets/imagens/botoes/fast_forward.png').convert_alpha(), False)
-
-        self.ultimo_spawn_inimigo = pg.time.get_ticks()
-        self.world = game.world  # Adicione esta linha
-        self.fonte1 = pg.font.SysFont("Consolas", 25, bold=True)
-        self.click_sound = mixer.Sound('assets/effects/click.wav')
-        self.cursor_turret = None
-        self.turret_sheet1 = pg.image.load(
-            'assets/imagens/torres/turret_1.png').convert_alpha()
-        self.turret_sheet2 = pg.image.load(
-            'assets/imagens/torres/turret_2.png').convert_alpha()
-        self.turret_sheet3 = pg.image.load(
-            'assets/imagens/torres/turret_3.png').convert_alpha()
-        self.farm_turret_sheet = pg.image.load(
-            'assets/imagens/torres/farming_turret.png').convert_alpha()
-        self.farm_turret_sheet = pg.transform.scale_by(self.farm_turret_sheet, 1/6)
         
     def create_turret(self, mouse_pos, placing_attack_turret, placing_farming_turret):
         mouse_tile_x = mouse_pos[0] // c.TILE_SIZE
@@ -89,16 +38,15 @@ class GameState(State):
                           turret.tile_x, turret.tile_y)
                     space_is_free = False
                     break
-                # ver se tem dinheiro rs
+
             if space_is_free:
-                if self.ControladorLevel.player.tentar_comprar():
-                    if placing_attack_turret == True:
-                        new_attack_turret = Turret([self.turret_sheet1, self.turret_sheet2, self.turret_sheet3] , mouse_tile_x, mouse_tile_y, 90, 600, 6)
+                    if placing_attack_turret and self.ControladorLevel.player.tentar_comprar(c.BUY_COST["attack"]):
+                        new_attack_turret = Turret([self.loader.turret_sheet1, self.loader.turret_sheet2, self.loader.turret_sheet3] , mouse_tile_x, mouse_tile_y, 90, 600, 6)
                         self.game.turret_group.add(new_attack_turret)
                         placing_attack_turret = False
 
-                    if placing_farming_turret == True:
-                        new_farming_turret = FarmingTurret(self.farm_turret_sheet, mouse_tile_x, mouse_tile_y)
+                    elif placing_farming_turret and self.ControladorLevel.player.tentar_comprar(c.BUY_COST["farm"]):
+                        new_farming_turret = FarmingTurret(self.loader.farm_turret_sheet, mouse_tile_x, mouse_tile_y)
                         self.game.turret_group.add(new_farming_turret)
                         placing_farming_turret = False
 
@@ -130,7 +78,7 @@ class GameState(State):
                 if event.key == pg.K_ESCAPE:
                     self.handle_escape()
                 if event.key == pg.K_SPACE:
-                    if self.tips_flag == False:
+                    if not self.tips_flag:
                         self.tips_flag = True
                     else:
                         self.tips_flag = False
@@ -171,46 +119,45 @@ class GameState(State):
             (f"Level {str(self.ControladorLevel.level)}"), self.fonte1, "grey100", c.SCREEN_WIDTH+45, 40)
 
         if not self.game_over:
-            if not self.level_comecou:
-                if self.begin_round_button.draw(self.screen):
+            if not self.ControladorLevel.level_comecou:
+                if self.loader.begin_round_button.draw(self.screen):
                     self.click_sound.play()
-                    self.level_comecou = True
+                    self.ControladorLevel.level_comecou = True
             else:
                 self.ControladorLevel.velocidade_jogo = 1
-                if self.acelerar_button.draw(self.screen):
+                if self.loader.acelerar_button.draw(self.screen):
                     self.ControladorLevel.velocidade_jogo = 3
                 if (pg.time.get_ticks() - self.ultimo_spawn_inimigo >= c.SPAWN_COOLDOWN / self.ControladorLevel.velocidade_jogo and self.ControladorLevel.inimigos_spawnados < len(self.ControladorLevel.lista_inimigos)):
                     self.game.enemy_group.add(self.game.decidir_tipo_inimigo())
                     self.ultimo_spawn_inimigo = pg.time.get_ticks()
 
         if self.ControladorLevel.checar_round_acabou():
-            self.level_comecou = False
             for turret in self.game.turret_group:
                 turret.ativar(self.ControladorLevel.player)
 
         if self.selected_turret and self.selected_turret.level < self.selected_turret.max_level:
-            if self.upgrade_button.draw(self.screen):
-                if self.ControladorLevel.player.tentar_upgradear():
+            print(c.UPGRADE_COST[self.selected_turret.level])
+            if self.loader.upgrade_button.draw(self.screen) and self.ControladorLevel.player.tentar_upgradear(c.UPGRADE_COST[self.selected_turret.level]):
                     self.upgrade_turret(self.selected_turret)
                     self.selected_turret = None
 
-        if self.turret_button.draw(self.screen):
+        if self.loader.turret_button.draw(self.screen):
             self.click_sound.play()
             self.choosing_turret = True            
         
         if self.choosing_turret == True:
-            if self.cancel_button.draw(self.screen):
+            if self.loader.cancel_button.draw(self.screen):
                 self.click_sound.play()
                 self.placing_turrets = False
                 self.choosing_turret = False
 
-            if self.attack_turret_button.draw(self.screen):
+            if self.loader.attack_turret_button.draw(self.screen):
                 self.placing_turrets = True
                 self.placing_farming_turret = False
                 self.placing_attack_turret = True
                 self.cursor_turret = pg.image.load(
                             'assets/imagens/torres/cursor_turret.png').convert_alpha()
-            elif self.farm_turret_button.draw(self.screen):
+            elif self.loader.farm_turret_button.draw(self.screen):
                 self.placing_turrets = True
                 self.placing_attack_turret = False
                 self.placing_farming_turret = True
@@ -231,3 +178,17 @@ class GameState(State):
     def printar_texto_na_tela(self, text, fonte, text_col, x, y):
         img = fonte.render(text, True, text_col)
         self.screen.blit(img, (x, y))
+
+    def variaveis(self):
+        self.placing_turrets = False
+        self.placing_attack_turret = False
+        self.placing_farming_turret = False
+        self.selected_turret = None
+        self.game_over = False
+        self.choosing_turret = False
+        self.tips_flag = False
+
+        self.ultimo_spawn_inimigo = pg.time.get_ticks() 
+        self.fonte1 = pg.font.SysFont("Consolas", 25, bold=True)
+        self.click_sound = mixer.Sound('assets/effects/click.wav')
+        self.cursor_turret = None

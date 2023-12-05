@@ -9,17 +9,13 @@ class Player():
     def recompensa_level(self, level):
         self.money += c.RECOMPENSA_LEVEL_PADRAO * (level/2)
     
-    def tentar_upgradear(self):
-        if self.money >= c.UPGRADE_COST:
-            self.money -= c.UPGRADE_COST
+    def tentar_upgradear(self, cost):
+        if self.money >= cost:
+            self.money -= cost
             return True
-        return False
     
-    def tentar_comprar(self):
-        if self.money >= c.BUY_COST:
-            self.money -= c.BUY_COST
+    def tentar_comprar(self, cost):
+        if self.money >= cost:
+            self.money -= cost
             return True
-        return False
-    #serão duas funções diferentes mesmo, pq no futuro o upgrade cost será multiplicado pelo nivel da torre 
-    #além disso, a mensagem que aparece quando vc tenta comprar algo ou upgradear algo sem dinheiro é diferente
-    #por enquanto tá assim msm
+

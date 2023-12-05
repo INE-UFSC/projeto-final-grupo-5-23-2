@@ -1,7 +1,7 @@
 #carrega imagens, arquivos, ect
 import constants as c
 import pygame as pg
-
+from pygame import mixer
 from button import Button
 
 class Loader():
@@ -10,9 +10,13 @@ class Loader():
 
     def load_principal(self, game):
         self.placing_turrets = False
+        self.placing_attack_turret = False
+        self.placing_farming_turret = False
         self.selected_turret = None
         self.level_comecou = False
         self.game_over = False
+        self.choosing_turret = False
+        self.tips_flag = False
 
         self.hud_image = pg.image.load(
             'assets/imagens/hud.jpg').convert_alpha()
@@ -23,35 +27,36 @@ class Loader():
         self.help_image = pg.image.load(
             'assets/imagens/help.png').convert_alpha()
 
-        buy_turret_image = pg.image.load(
-            'assets/imagens/botoes/buy_turret.png').convert_alpha()
-        cancel_image = pg.image.load(
-            'assets/imagens/botoes/cancel.png').convert_alpha()
-        upgrade_turret_image = pg.image.load(
-            'assets/imagens/botoes/upgrade_turret.png').convert_alpha()
-        begin_round_image = pg.image.load(
-            'assets/imagens/botoes/begin.png').convert_alpha()
-        acelerar_image = pg.image.load(
-            'assets/imagens/botoes/fast_forward.png').convert_alpha()
 
         self.turret_button = Button(
-            c.SCREEN_WIDTH + 40, 350, buy_turret_image, True)
+            c.SCREEN_WIDTH + 40, 350, pg.image.load(
+            'assets/imagens/botoes/buy_turret.png').convert_alpha(), True)
+        
+        self.farm_turret_button = Button(
+            c.SCREEN_WIDTH +40, 450, pg.image.load(
+                'assets/imagens/botoes/farm_turret.png').convert_alpha(), True)
+        self.attack_turret_button = Button(
+            c.SCREEN_WIDTH +40, 400, pg.image.load(
+                'assets/imagens/botoes/attack_turret.png').convert_alpha(), True)
+
         self.cancel_button = Button(
-            c.SCREEN_WIDTH + 40, 350, cancel_image, True)
+            c.SCREEN_WIDTH + 40, 350, pg.image.load(
+            'assets/imagens/botoes/cancel.png').convert_alpha(), True)
         self.upgrade_button = Button(
-            c.SCREEN_WIDTH + 40, 400, upgrade_turret_image, True)
+            c.SCREEN_WIDTH + 40, 400, pg.image.load(
+            'assets/imagens/botoes/upgrade_turret.png').convert_alpha(), True)
         self.begin_round_button = Button(
-            c.SCREEN_WIDTH + 40, 300, begin_round_image, True)
+            c.SCREEN_WIDTH + 40, 300, pg.image.load(
+            'assets/imagens/botoes/begin.png').convert_alpha(), True)
         self.acelerar_button = Button(
-            c.SCREEN_WIDTH + 40, 300, acelerar_image, False)
+            c.SCREEN_WIDTH + 40, 300, pg.image.load(
+            'assets/imagens/botoes/fast_forward.png').convert_alpha(), False)
 
         self.ultimo_spawn_inimigo = pg.time.get_ticks()
         self.world = game.world  # Adicione esta linha
-        self.ControladorLevel = game.ControladorLevel
         self.fonte1 = pg.font.SysFont("Consolas", 25, bold=True)
-        self.click_sound = pg.mixer.Sound('assets/effects/click.wav')
-        self.cursor_turret = pg.image.load(
-            'assets/imagens/torres/cursor_turret.png').convert_alpha()
+        self.click_sound = mixer.Sound('assets/effects/click.wav')
+        self.cursor_turret = None
         self.turret_sheet1 = pg.image.load(
             'assets/imagens/torres/turret_1.png').convert_alpha()
         self.turret_sheet2 = pg.image.load(

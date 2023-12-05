@@ -20,6 +20,8 @@ class ControladorLevel():
 
         self.player = Player()
         
+        self.level_comecou = False
+
         self.process_inimigos()
 
     def process_inimigos(self):
@@ -42,6 +44,7 @@ class ControladorLevel():
     def checar_round_acabou(self):
         if (self.inimigos_killados + self.inimigos_missados) == len(self.lista_inimigos):
             self.reset_round()
+            self.level_comecou = False
             level_complete = mixer.Sound('assets/effects/levelcomplete.wav')
             level_complete.play()
             return True
