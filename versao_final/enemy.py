@@ -65,20 +65,20 @@ class Enemy(pg.sprite.Sprite):
 
 
 class InimigoFraco(Enemy):
-    def init(self, waypoints, image):
-        super().init(waypoints, image, 1.2, 30, 10, 1)
+    def __init__(self, waypoints, image):
+        super().__init__(waypoints, image, 1.2, 30, 10, 1)
 
 
 class InimigoNormal(Enemy):
-    def init(self, waypoints, image):
-        super().init(waypoints, image, 1, 90, 40, 5)
+    def __init__(self, waypoints, image):
+        super().__init__(waypoints, image, 1, 90, 40, 5)
 
 
 class InimigoForte(Enemy):
-    def init(self, waypoints, image):
-        super().init(waypoints, image, 1.5, 200, 80, 20)
+    def __init__(self, waypoints, image):
+        super().__init__(waypoints, image, 1.5, 200, 80, 20)
 
 
 class InimigoElite(Enemy):
-    def init(self, waypoints, image):
-        super().init(waypoints, image, 1, 500, 300, 30)
+    def __init__(self, waypoints, image):
+        super().__init__(waypoints, image, 1, 500, 300, 30)
