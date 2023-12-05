@@ -57,11 +57,13 @@ class Turret(pg.sprite.Sprite, Tower):
     def upgrade(self):
         if self.level < self.max_level:
             self.level += 1
-            self.damage = self.damage + self.damage * 0.5
+            self.damage = self.damage * 2
             self.cooldown = self.cooldown - self.cooldown * 0.3
-            self.range = self.range + self.level * 0.15
+            self.range = self.range * 1.2
             self.animation_list = self.load_images()
             self.original_image = self.animation_list[self.frame_index]
+
+            self.desenhar_range()
 
     def load_images(self):
         size = self.sprite_sheet[self.level].get_height()

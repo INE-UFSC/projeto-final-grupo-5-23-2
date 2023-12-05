@@ -3,50 +3,50 @@
 SPAWN_POR_ROUND = [
   {
     #1
-    "fraco": 0,
-    "normal": 10,
+    "fraco": 10,
+    "normal": 0,
     "forte": 0,
     "elite": 0
   },
   {
     #2
-    "fraco": 0,
+    "fraco": 10,
     "normal": 3,
-    "forte": 7,
+    "forte": 0,
     "elite": 0
   },
   {
     #3
     "fraco": 15,
-    "normal": 5,
-    "forte": 1,
+    "normal": 6,
+    "forte": 0,
     "elite": 0
   },
   {
     #4
-    "fraco": 30,
-    "normal": 15,
-    "forte": 0,
+    "fraco": 15,
+    "normal": 3,
+    "forte": 3,
     "elite": 0
   },
   {
     #5
-    "fraco": 5,
-    "normal": 20,
-    "forte": 0,
+    "fraco": 10,
+    "normal": 10,
+    "forte": 3,
     "elite": 0
   },
   {
     #6
-    "fraco": 15,
-    "normal": 15,
-    "forte": 4,
+    "fraco": 0,
+    "normal": 10,
+    "forte": 6,
     "elite": 0
   },
   {
     #7
-    "fraco": 20,
-    "normal": 25,
+    "fraco": 0,
+    "normal": 10,
     "forte": 10,
     "elite": 0
   },
@@ -54,20 +54,20 @@ SPAWN_POR_ROUND = [
     #8
     "fraco": 10,
     "normal": 20,
-    "forte": 30,
+    "forte": 10,
     "elite": 0
   },
   {
     #9
     "fraco": 20,
     "normal": 15,
-    "forte": 40,
+    "forte": 30,
     "elite": 0
   },
   {
     #10
     "fraco": 20,
-    "normal": 100,
+    "normal": 50,
     "forte": 50,
     "elite": 0
   },
