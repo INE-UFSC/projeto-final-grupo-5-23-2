@@ -13,16 +13,12 @@ from loader import Loader
 class GameState(State):
     def __init__(self, screen, clock, game):
         super().__init__(screen, clock, game)
-        
         #controlador de level, world e game referentes
         self.ControladorLevel = game.ControladorLevel
         self.loader = Loader(screen, clock, game)
         self.world = game.world
-
-        #declara algumas variáveis
         self.variaveis()
 
-        
     def create_turret(self, mouse_pos, placing_attack_turret, placing_farming_turret):
         mouse_tile_x = mouse_pos[0] // c.TILE_SIZE
         mouse_tile_y = mouse_pos[1] // c.TILE_SIZE

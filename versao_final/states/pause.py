@@ -11,7 +11,6 @@ from states.state import State
 
 
 class PauseState(State):
-
     def __init__(self, screen, clock, game):
         super().__init__(screen, clock, game)
         self.paused = True
